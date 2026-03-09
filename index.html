@@ -26,7 +26,7 @@
         html { scroll-behavior: smooth; }
         body { background-color: var(--bg-color); color: var(--text-main); overflow-x: hidden; }
 
-        /* --- 2. Solid Glass Feel Header --- */
+        /* --- 2. Solid Glass Feel Header (Responsive) --- */
         header {
             position: fixed; top: 0; width: 100%; height: 64px;
             background: var(--surface-color);
@@ -37,71 +37,68 @@
             border-bottom: 1px solid rgba(0,0,0,0.05);
         }
 
-        .logo img { height: 40px; width: auto; mix-blend-mode: multiply; transition: opacity 0.3s ease; }
+        .logo img { height: 36px; width: auto; mix-blend-mode: multiply; transition: opacity 0.3s ease; }
         .logo img:hover { opacity: 0.8; }
 
-        nav ul { display: flex; list-style: none; gap: 2.5rem; }
+        nav ul { display: flex; list-style: none; gap: 2vw; }
         nav a { 
-            text-decoration: none; color: var(--text-main); font-size: 0.85rem; 
+            text-decoration: none; color: var(--text-main); font-size: clamp(0.75rem, 1.5vw, 0.85rem); 
             font-weight: 500; letter-spacing: -0.01em; transition: color 0.3s ease; 
         }
         nav a:hover { color: var(--accent); }
 
         section {
             padding: 100px 5% 80px; display: flex; flex-direction: column; align-items: center;
-            scroll-margin-top: 64px; 
+            scroll-margin-top: 64px; width: 100%;
         }
 
         .section-title {
-            font-size: 2.5rem; font-weight: 600; letter-spacing: -0.02em; margin-bottom: 3rem; text-align: center;
+            font-size: clamp(2rem, 5vw, 2.5rem); font-weight: 600; letter-spacing: -0.02em; margin-bottom: 3rem; text-align: center;
         }
 
-        /* --- 3. Hero Section & Typewriter Styling --- */
+        /* --- 3. Hero Section & Typewriter Formatting --- */
         #hero {
-            padding: 180px 5% 100px; text-align: center; max-width: 1000px; margin: 0 auto;
+            padding: clamp(120px, 15vw, 180px) 5% 100px;
+            text-align: center;
+            width: 100%;
+            max-width: 1000px;
+            margin: 0 auto;
         }
         
         .hero-title-wrapper {
-            /* Prevents buttons from bouncing when text wraps on mobile */
-            min-height: 1.2em; 
-            margin-bottom: 1.5rem;
+            /* FIXED: Reserves space so the buttons below never jump when text wraps */
+            min-height: clamp(80px, 12vw, 100px); 
             display: flex;
-            justify-content: center;
             align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
         }
 
         .hero-title {
-            font-size: 4.5rem; font-weight: 700; letter-spacing: -0.04em; line-height: 1.05;
+            font-size: clamp(2.5rem, 7vw, 4.5rem); 
+            font-weight: 700; letter-spacing: -0.04em; line-height: 1.1;
             background: linear-gradient(135deg, #1d1d1f 0%, #434345 100%);
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            text-align: center;
         }
 
-        /* The blinking cursor */
         .blinking-cursor {
-            font-size: 4.5rem; font-weight: 300; color: #1d1d1f;
+            font-size: clamp(2.5rem, 7vw, 4.5rem); 
+            font-weight: 300; color: #1d1d1f;
             animation: blink 1s step-end infinite;
             margin-left: 2px;
         }
 
-        @keyframes blink {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0; }
-        }
-        
-        /* Mobile height fix */
-        @media (max-width: 768px) {
-            .hero-title-wrapper { min-height: 2.4em; }
-            .hero-title, .blinking-cursor { font-size: 3rem; }
-        }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
 
         .hero-subtitle {
-            font-size: 1.5rem; color: var(--text-muted); font-weight: 400; max-width: 700px; margin: 0 auto; line-height: 1.4;
+            font-size: clamp(1.1rem, 3vw, 1.5rem); color: var(--text-muted); font-weight: 400; max-width: 700px; margin: 0 auto; line-height: 1.4;
         }
 
-        .hero-buttons { display: flex; justify-content: center; gap: 16px; margin: 2.5rem 0 3.5rem; }
+        .hero-buttons { display: flex; justify-content: center; gap: 16px; margin: 2.5rem 0 3.5rem; flex-wrap: wrap; }
         .btn-primary, .btn-secondary {
             padding: 14px 28px; border-radius: 30px; font-size: 1rem; font-weight: 500;
-            text-decoration: none; transition: all 0.3s ease;
+            text-decoration: none; transition: all 0.3s ease; white-space: nowrap;
         }
         .btn-primary { background: var(--text-main); color: #ffffff; box-shadow: 0 8px 20px rgba(0,0,0,0.1); }
         .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 12px 24px rgba(0,0,0,0.15); }
@@ -109,29 +106,30 @@
         .btn-secondary:hover { background: #ffffff; border-color: var(--text-main); }
 
         /* --- 4. Live Analytics Dashboard --- */
-        .analytics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 24px; width: 100%; max-width: 1000px; margin-top: 1rem; }
+        .analytics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: clamp(16px, 3vw, 24px); width: 100%; max-width: 1000px; margin-top: 1rem; }
         .stat-card {
             background: rgba(255, 255, 255, 0.6); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-            border: 1px solid var(--glass-border); border-radius: 24px; padding: 2.5rem 1.5rem;
+            border: 1px solid var(--glass-border); border-radius: 24px; padding: clamp(1.5rem, 4vw, 2.5rem) 1.5rem;
             text-align: center; box-shadow: 0 4px 24px rgba(0,0,0,0.02); transition: transform 0.4s ease;
         }
         .stat-card:hover { transform: translateY(-5px); }
-        .stat-number { font-size: 3.5rem; font-weight: 700; color: var(--accent); letter-spacing: -0.03em; line-height: 1; margin-bottom: 0.5rem; }
-        .stat-label { font-size: 1rem; font-weight: 500; color: var(--text-muted); }
+        .stat-number { font-size: clamp(2.5rem, 6vw, 3.5rem); font-weight: 700; color: var(--accent); letter-spacing: -0.03em; line-height: 1; margin-bottom: 0.5rem; }
+        .stat-label { font-size: clamp(0.9rem, 2vw, 1rem); font-weight: 500; color: var(--text-muted); }
 
-        /* --- 5. Hall of Fame (Smooth Transitions) --- */
+        /* --- 5. Hall of Fame (Responsive Carousel) --- */
         .carousel-wrapper { width: 100vw; position: relative; padding: 40px 0 60px; display: flex; align-items: center; }
-        .carousel-wrapper::before, .carousel-wrapper::after { content: ""; position: absolute; top: 0; width: 20vw; height: 100%; z-index: 5; pointer-events: none; }
+        .carousel-wrapper::before, .carousel-wrapper::after { content: ""; position: absolute; top: 0; width: 15vw; height: 100%; z-index: 5; pointer-events: none; }
         .carousel-wrapper::before { left: 0; background: linear-gradient(to right, var(--bg-color) 0%, rgba(251,251,253,0) 100%); }
         .carousel-wrapper::after { right: 0; background: linear-gradient(to left, var(--bg-color) 0%, rgba(251,251,253,0) 100%); }
         .carousel-track {
-            display: flex; gap: 40px; padding: 0 calc(50vw - 160px); overflow-x: auto;
-            scroll-snap-type: x mandatory; scroll-behavior: smooth; scrollbar-width: none; 
+            display: flex; gap: 30px; 
+            padding: 0 calc(50vw - 150px); 
+            overflow-x: auto; scroll-snap-type: x mandatory; scroll-behavior: smooth; scrollbar-width: none; 
         }
         .carousel-track::-webkit-scrollbar { display: none; }
         
         .student-card {
-            scroll-snap-align: center; width: 320px; flex-shrink: 0;
+            scroll-snap-align: center; width: 300px; flex-shrink: 0;
             background: rgba(255, 255, 255, 0.4); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
             border-radius: 24px; border: 1px solid rgba(255, 255, 255, 0.6); overflow: hidden; position: relative;
             transform: scale(0.85); opacity: 0.3;
@@ -140,48 +138,48 @@
         .student-card.active, .student-card:hover { transform: scale(1.05) translateY(-5px); opacity: 1; background: #ffffff; box-shadow: 0 20px 50px rgba(0, 113, 227, 0.08), inset 0 0 0 1px rgba(255,255,255,1); z-index: 10; }
         .student-card::after { content: ''; position: absolute; top: 0; left: -150%; width: 50%; height: 100%; background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.6) 50%, rgba(255,255,255,0) 100%); transform: skewX(-25deg); transition: 1s ease; pointer-events: none; }
         .student-card:hover::after { left: 200%; }
-        .student-img { width: 100%; height: 240px; object-fit: cover; background: #e5e5ea; transition: transform 1.2s ease; }
+        .student-img { width: 100%; height: 220px; object-fit: cover; background: #e5e5ea; transition: transform 1.2s ease; }
         .student-card.active .student-img { transform: scale(1.02); } 
-        .student-info { padding: 1.8rem; text-align: center; }
-        .student-name { font-size: 1.25rem; font-weight: 600; letter-spacing: -0.01em;}
-        .student-brand { font-size: 1.05rem; color: var(--text-muted); margin-top: 4px; }
-        .student-dept { font-size: 0.85rem; font-weight: 600; color: var(--accent); margin-top: 10px; text-transform: uppercase; letter-spacing: 0.5px;}
+        .student-info { padding: 1.5rem; text-align: center; }
+        .student-name { font-size: 1.2rem; font-weight: 600; letter-spacing: -0.01em;}
+        .student-brand { font-size: 1rem; color: var(--text-muted); margin-top: 4px; }
+        .student-dept { font-size: 0.8rem; font-weight: 600; color: var(--accent); margin-top: 10px; text-transform: uppercase; letter-spacing: 0.5px;}
 
         /* --- 6. 17-Week IT Spotlight --- */
-        .it-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; width: 100%; max-width: 1000px; }
+        .it-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: clamp(20px, 4vw, 30px); width: 100%; max-width: 1000px; }
         .it-card { background: #fff; border-radius: 20px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.03); border: 1px solid rgba(0,0,0,0.02); transition: transform 0.4s ease; }
         .it-card:hover { transform: translateY(-8px); box-shadow: 0 12px 30px rgba(0,0,0,0.06); }
-        .it-img { width: 100%; height: 200px; object-fit: cover; }
+        .it-img { width: 100%; height: clamp(180px, 20vw, 200px); object-fit: cover; }
         .it-info { padding: 1.5rem; }
         .it-title { font-size: 1.1rem; font-weight: 600; margin-bottom: 5px; }
         .it-desc { font-size: 0.95rem; color: var(--text-muted); line-height: 1.5; }
 
         /* --- 7. Resources Hub --- */
-        .resource-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; width: 100%; max-width: 1000px; }
+        .resource-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; width: 100%; max-width: 1000px; }
         .resource-card { background: rgba(255, 255, 255, 0.5); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 1px solid var(--glass-border); border-radius: 16px; padding: 1.5rem; display: flex; align-items: center; justify-content: space-between; transition: all 0.3s ease; cursor: pointer; text-decoration: none; color: var(--text-main); }
         .resource-card:hover { background: #fff; border-color: var(--accent); }
         .res-text strong { display: block; font-size: 1.05rem; margin-bottom: 4px; }
         .res-text span { font-size: 0.85rem; color: var(--text-muted); }
-        .download-icon { color: var(--accent); }
+        .download-icon { color: var(--accent); flex-shrink: 0; margin-left: 15px;}
 
-        /* --- 8. Calendar Styling --- */
-        .calendar-container { width: 100%; max-width: 900px; background: #ffffff; border-radius: 24px; padding: 2.5rem; box-shadow: 0 8px 32px rgba(0,0,0,0.03); border: 1px solid rgba(0,0,0,0.02); }
-        .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 12px; }
-        .day-name { text-align: center; font-weight: 500; color: var(--text-muted); font-size: 0.85rem; padding-bottom: 10px;}
-        .calendar-day { aspect-ratio: 1; display: flex; flex-direction: column; justify-content: flex-start; padding: 12px; border-radius: 14px; border: 1px solid transparent; background: #fbfbfd; cursor: pointer; transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); position: relative; font-size: 1.1rem; font-weight: 500; }
+        /* --- 8. Calendar Styling (Responsive Grid) --- */
+        .calendar-container { width: 100%; max-width: 900px; background: #ffffff; border-radius: 24px; padding: clamp(1.5rem, 5vw, 2.5rem); box-shadow: 0 8px 32px rgba(0,0,0,0.03); border: 1px solid rgba(0,0,0,0.02); }
+        .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: clamp(4px, 1.5vw, 12px); }
+        .day-name { text-align: center; font-weight: 500; color: var(--text-muted); font-size: clamp(0.7rem, 2vw, 0.85rem); padding-bottom: 10px;}
+        .calendar-day { aspect-ratio: 1; display: flex; flex-direction: column; justify-content: flex-start; padding: clamp(4px, 1.5vw, 12px); border-radius: clamp(8px, 2vw, 14px); border: 1px solid transparent; background: #fbfbfd; cursor: pointer; transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); position: relative; font-size: clamp(0.9rem, 2.5vw, 1.1rem); font-weight: 500; }
         .calendar-day:hover { background: #ffffff; box-shadow: 0 4px 12px rgba(0,0,0,0.05); transform: scale(1.05); }
         .calendar-day.past { color: #d2d2d7; pointer-events: none; background: transparent; }
         .calendar-day.has-event { background: rgba(0, 113, 227, 0.05); color: var(--accent); border: 1px solid rgba(0, 113, 227, 0.1); }
         .event-indicator { width: 6px; height: 6px; background: var(--accent); border-radius: 50%; margin-top: auto; align-self: center; }
 
         /* --- 9. Glassmorphism Modal --- */
-        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.2); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); z-index: 2000; justify-content: center; align-items: center; opacity: 0; transition: opacity 0.4s ease; }
-        .modal-content { background: var(--surface-color); backdrop-filter: saturate(180%) blur(30px); -webkit-backdrop-filter: saturate(180%) blur(30px); padding: 3rem; border-radius: 24px; max-width: 500px; width: 90%; position: relative; box-shadow: 0 24px 48px rgba(0,0,0,0.1); border: 1px solid var(--glass-border); transform: translateY(20px); transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); }
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.2); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); z-index: 2000; justify-content: center; align-items: center; opacity: 0; transition: opacity 0.4s ease; padding: 20px;}
+        .modal-content { background: var(--surface-color); backdrop-filter: saturate(180%) blur(30px); -webkit-backdrop-filter: saturate(180%) blur(30px); padding: clamp(2rem, 5vw, 3rem); border-radius: 24px; width: 100%; max-width: 500px; position: relative; box-shadow: 0 24px 48px rgba(0,0,0,0.1); border: 1px solid var(--glass-border); transform: translateY(20px); transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); }
         .modal-overlay.active { opacity: 1; }
         .modal-overlay.active .modal-content { transform: translateY(0); }
-        .close-btn { position: absolute; top: 20px; right: 24px; font-size: 1.5rem; cursor: pointer; color: var(--text-muted); transition: color 0.2s; }
+        .close-btn { position: absolute; top: 15px; right: 20px; font-size: 1.5rem; cursor: pointer; color: var(--text-muted); transition: color 0.2s; }
         .close-btn:hover { color: var(--text-main); }
-        .modal-brand { font-size: 2rem; font-weight: 600; letter-spacing: -0.02em; margin-bottom: 8px; }
+        .modal-brand { font-size: clamp(1.5rem, 5vw, 2rem); font-weight: 600; letter-spacing: -0.02em; margin-bottom: 8px; line-height: 1.2;}
         .modal-reqs { margin-top: 20px; }
         .modal-reqs ul { margin-left: 20px; color: var(--text-main); font-size: 0.95rem; line-height: 1.6;}
         .modal-reqs li { margin-bottom: 8px; }
@@ -193,6 +191,14 @@
         .social-icon:hover { background: var(--text-main); color: #ffffff; transform: translateY(-3px); }
         .social-icon svg { width: 20px; height: 20px; fill: currentColor; }
         .footer-text { font-size: 0.85rem; color: var(--text-muted); text-align: center; line-height: 1.5;}
+
+        /* Mobile specific overrides */
+        @media (max-width: 768px) {
+            nav ul { gap: 1.5rem; }
+            .hero-title-wrapper { min-height: 120px; align-items: flex-start; } /* extra room for multi-line typewriting */
+            .hero-buttons { flex-direction: column; width: 100%; max-width: 300px;}
+            .btn-primary, .btn-secondary { width: 100%; text-align: center;}
+        }
     </style>
 </head>
 <body>
@@ -243,31 +249,31 @@
                 <div class="student-card">
                     <img src="/api/placeholder/320/240" alt="Student" class="student-img">
                     <div class="student-info">
-                        <div class="student-name">Aarav Sharma</div>
-                        <div class="student-brand">Radisson Blu Dwarka</div>
-                        <div class="student-dept">Learning & Development</div>
-                    </div>
-                </div>
-                <div class="student-card">
-                    <img src="/api/placeholder/320/240" alt="Student" class="student-img">
-                    <div class="student-info">
-                        <div class="student-name">Priya Patel</div>
-                        <div class="student-brand">The Oberoi Group</div>
-                        <div class="student-dept">Front Office</div>
-                    </div>
-                </div>
-                <div class="student-card">
-                    <img src="/api/placeholder/320/240" alt="Student" class="student-img">
-                    <div class="student-info">
-                        <div class="student-name">Rohan Gupta</div>
-                        <div class="student-brand">ITC Hotels</div>
-                        <div class="student-dept">Bakery & Pastry</div>
+                        <div class="student-name">Ridhi Chawla</div>
+                        <div class="student-brand">IHCL</div>
+                        <div class="student-dept">HDP</div>
                     </div>
                 </div>
                 <div class="student-card">
                     <img src="/api/placeholder/320/240" alt="Student" class="student-img">
                     <div class="student-info">
                         <div class="student-name">Ridhi Chawla</div>
+                        <div class="student-brand">IHCL</div>
+                        <div class="student-dept">HDP</div>
+                    </div>
+                </div>
+                <div class="student-card">
+                    <img src="/api/placeholder/320/240" alt="Student" class="student-img">
+                    <div class="student-info">
+                         <div class="student-name">Ridhi Chawla</div>
+                        <div class="student-brand">IHCL</div>
+                        <div class="student-dept">HDP</div>
+                    </div>
+                </div>
+                <div class="student-card">
+                    <img src="/api/placeholder/320/240" alt="Student" class="student-img">
+                    <div class="student-info">
+                     <div class="student-name">Ridhi Chawla</div>
                         <div class="student-brand">IHCL</div>
                         <div class="student-dept">HDP</div>
                     </div>
@@ -362,23 +368,23 @@
     </div>
 
     <script>
-        // --- 1. NEW TYPEWRITER ANIMATION LOGIC ---
+        // --- 1. HUMAN TYPEWRITER ANIMATION LOGIC ---
         const textElement = document.getElementById('tpcText');
         
-        // Helper function for delays
+        // Helper function to pause execution for 'ms' milliseconds
         const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
         async function runTypewriter() {
-            // Wait 1.5s after page load so the user notices it
+            // Wait 1.5 seconds so user notices the page loaded
             await sleep(1500);
 
-            // Step 1: Backspace "C", then "P"
+            // Backspace "C", then "P"
             textElement.innerText = "TP";
             await sleep(150);
             textElement.innerText = "T";
-            await sleep(400); // Slight pause before typing the rest
+            await sleep(400); 
 
-            // Step 2: Type "raining & Placement Cell" character by character
+            // Type the rest of the text
             const appendText = "raining & Placement Cell";
             for (let i = 0; i < appendText.length; i++) {
                 textElement.innerText += appendText[i];
@@ -386,28 +392,26 @@
                 await sleep(50 + Math.random() * 30); 
             }
 
-            // Step 3: Hold the full text so people can read it
+            // Hold so people can read it
             await sleep(3500);
 
-            // Step 4: Backspace rapidly back down to "T"
+            // Delete text rapidly
             let currentFull = textElement.innerText;
             for (let i = currentFull.length; i > 1; i--) {
                 textElement.innerText = currentFull.substring(0, i - 1);
-                // Fast deleting speed (30ms)
+                // Fast deleting speed
                 await sleep(30); 
             }
 
-            await sleep(400); // Slight pause before restoring
+            await sleep(400); 
 
-            // Step 5: Type "PC" to restore the original "TPC"
+            // Restore "TPC"
             textElement.innerText = "TP";
             await sleep(150);
             textElement.innerText = "TPC";
         }
 
-        // Start animation when window loads
         window.addEventListener('load', runTypewriter);
-
 
         // --- 2. Number Counter Animation Logic ---
         const counters = document.querySelectorAll('.stat-number');
@@ -433,7 +437,6 @@
             });
         }, { threshold: 0.5 });
         counters.forEach(counter => counterObserver.observe(counter));
-
 
         // --- 3. Snap & Breathe Carousel Logic ---
         const track = document.getElementById('carouselTrack');
@@ -466,7 +469,6 @@
         track.addEventListener('touchstart', () => clearInterval(autoScrollTimer));
         track.addEventListener('touchend', startAutoScroll);
         startAutoScroll();
-
 
         // --- 4. Google Sheets & Calendar Logic ---
         const sheetCSV_URL = 'YOUR_PUBLISHED_CSV_LINK_HERE'; 
@@ -555,7 +557,6 @@
             }
         }
         fetchSheetData();
-
 
         // --- 5. Glassmorphism Modal Logic ---
         const modal = document.getElementById('interviewModal');
