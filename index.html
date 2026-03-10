@@ -66,27 +66,26 @@
         }
         
         .hero-title-wrapper {
-            /* FIXED: Reserves space so the buttons below never jump when text wraps */
-            min-height: clamp(80px, 12vw, 100px); 
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            /* Pure text-align ensures perfect centering as the text types out */
+            min-height: clamp(60px, 10vw, 100px); 
+            text-align: center;
             margin-bottom: 1.5rem;
         }
 
         .hero-title {
-            font-size: clamp(2.5rem, 7vw, 4.5rem); 
-            font-weight: 700; letter-spacing: -0.04em; line-height: 1.1;
+            /* Adjusted bounds: smaller on mobile (1.6rem) so it fits perfectly */
+            font-size: clamp(1.6rem, 5vw, 4.2rem); 
+            font-weight: 700; letter-spacing: -0.04em; line-height: 1.2;
             background: linear-gradient(135deg, #1d1d1f 0%, #434345 100%);
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            text-align: center;
+            display: inline; /* Keeps text flowing naturally with the cursor */
         }
 
         .blinking-cursor {
-            font-size: clamp(2.5rem, 7vw, 4.5rem); 
+            font-size: clamp(1.6rem, 5vw, 4.2rem); 
             font-weight: 300; color: #1d1d1f;
             animation: blink 1s step-end infinite;
-            margin-left: 2px;
+            display: inline;
         }
 
         @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
@@ -195,7 +194,7 @@
         /* Mobile specific overrides */
         @media (max-width: 768px) {
             nav ul { gap: 1.5rem; }
-            .hero-title-wrapper { min-height: 120px; align-items: flex-start; } /* extra room for multi-line typewriting */
+            .hero-title-wrapper { min-height: 90px; }
             .hero-buttons { flex-direction: column; width: 100%; max-width: 300px;}
             .btn-primary, .btn-secondary { width: 100%; text-align: center;}
         }
@@ -216,8 +215,7 @@
 
     <section id="hero">
         <div class="hero-title-wrapper">
-            <h1 class="hero-title" id="tpcText">TPC</h1>
-            <span class="blinking-cursor">|</span>
+            <h1 class="hero-title" id="tpcText">TPC</h1><span class="blinking-cursor">|</span>
         </div>
         <p class="hero-subtitle">Empowering the next generation of hospitality leaders. Track upcoming drives, access premium L&D resources, and celebrate our top placements.</p>
         
