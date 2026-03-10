@@ -26,7 +26,7 @@
         html { scroll-behavior: smooth; }
         body { background-color: var(--bg-color); color: var(--text-main); overflow-x: hidden; }
 
-        /* --- 2. Solid Glass Feel Header (Responsive) --- */
+        /* --- 2. Solid Glass Feel Header & Pristine Dropdown --- */
         header {
             position: fixed; top: 0; width: 100%; height: 64px;
             background: var(--surface-color);
@@ -40,65 +40,55 @@
         .logo img { height: 36px; width: auto; mix-blend-mode: multiply; transition: opacity 0.3s ease; }
         .logo img:hover { opacity: 0.8; }
 
-        nav ul { display: flex; list-style: none; gap: 2vw; }
-        nav a { 
-            text-decoration: none; color: var(--text-main); font-size: clamp(0.75rem, 1.5vw, 0.85rem); 
-            font-weight: 500; letter-spacing: -0.01em; transition: color 0.3s ease; 
+        /* Cleaned Up Menu */
+        .dropdown { position: relative; }
+        
+        .menu-btn {
+            background: transparent; border: none; cursor: pointer;
+            color: var(--text-main); font-size: 1rem; font-weight: 500;
+            padding: 8px 16px; border-radius: 8px; transition: all 0.2s ease;
+            letter-spacing: -0.01em;
         }
-        nav a:hover { color: var(--accent); }
-
-        section {
-            padding: 100px 5% 80px; display: flex; flex-direction: column; align-items: center;
-            scroll-margin-top: 64px; width: 100%;
-        }
-
-        .section-title {
-            font-size: clamp(2rem, 5vw, 2.5rem); font-weight: 600; letter-spacing: -0.02em; margin-bottom: 3rem; text-align: center;
-        }
-
-        /* --- 3. Hero Section & Typewriter Formatting --- */
-        #hero {
-            padding: clamp(120px, 15vw, 180px) 5% 100px;
-            text-align: center;
-            width: 100%;
-            max-width: 1000px;
-            margin: 0 auto;
+        .menu-btn:hover { background: rgba(0,0,0,0.04); }
+        
+        .dropdown-menu {
+            position: absolute; top: 100%; right: 0; margin-top: 8px;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: saturate(180%) blur(30px);
+            -webkit-backdrop-filter: saturate(180%) blur(30px);
+            border: 1px solid var(--glass-border);
+            border-radius: 14px; padding: 6px;
+            display: flex; flex-direction: column; min-width: 180px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            opacity: 0; visibility: hidden; transform: translateY(-10px);
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
         }
         
-        .hero-title-wrapper {
-            /* Pure text-align ensures perfect centering as the text types out */
-            min-height: clamp(60px, 10vw, 100px); 
-            text-align: center;
-            margin-bottom: 1.5rem;
+        .dropdown.active .dropdown-menu { opacity: 1; visibility: visible; transform: translateY(0); }
+        
+        .dropdown-menu a {
+            text-decoration: none; color: var(--text-main); font-size: 0.9rem; font-weight: 500;
+            padding: 10px 14px; border-radius: 8px; transition: all 0.2s ease;
+            text-align: left; letter-spacing: -0.01em;
         }
+        .dropdown-menu a:hover { background: rgba(0,0,0,0.06); color: var(--accent); }
 
+        section { padding: 100px 5% 80px; display: flex; flex-direction: column; align-items: center; scroll-margin-top: 64px; width: 100%; }
+        .section-title { font-size: clamp(2rem, 5vw, 2.5rem); font-weight: 600; letter-spacing: -0.02em; margin-bottom: 3rem; text-align: center; }
+
+        /* --- 3. Hero Section & Typewriter Formatting --- */
+        #hero { padding: clamp(120px, 15vw, 180px) 5% 100px; text-align: center; width: 100%; max-width: 1000px; margin: 0 auto; }
+        .hero-title-wrapper { min-height: clamp(60px, 10vw, 100px); text-align: center; margin-bottom: 1.5rem; }
         .hero-title {
-            /* Adjusted bounds: smaller on mobile (1.6rem) so it fits perfectly */
-            font-size: clamp(1.6rem, 5vw, 4.2rem); 
-            font-weight: 700; letter-spacing: -0.04em; line-height: 1.2;
-            background: linear-gradient(135deg, #1d1d1f 0%, #434345 100%);
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            display: inline; /* Keeps text flowing naturally with the cursor */
+            font-size: clamp(1.6rem, 5vw, 4.2rem); font-weight: 700; letter-spacing: -0.04em; line-height: 1.2;
+            background: linear-gradient(135deg, #1d1d1f 0%, #434345 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; display: inline;
         }
-
-        .blinking-cursor {
-            font-size: clamp(1.6rem, 5vw, 4.2rem); 
-            font-weight: 300; color: #1d1d1f;
-            animation: blink 1s step-end infinite;
-            display: inline;
-        }
-
+        .blinking-cursor { font-size: clamp(1.6rem, 5vw, 4.2rem); font-weight: 300; color: #1d1d1f; animation: blink 1s step-end infinite; display: inline; }
         @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
-
-        .hero-subtitle {
-            font-size: clamp(1.1rem, 3vw, 1.5rem); color: var(--text-muted); font-weight: 400; max-width: 700px; margin: 0 auto; line-height: 1.4;
-        }
+        .hero-subtitle { font-size: clamp(1.1rem, 3vw, 1.5rem); color: var(--text-muted); font-weight: 400; max-width: 700px; margin: 0 auto; line-height: 1.4; }
 
         .hero-buttons { display: flex; justify-content: center; gap: 16px; margin: 2.5rem 0 3.5rem; flex-wrap: wrap; }
-        .btn-primary, .btn-secondary {
-            padding: 14px 28px; border-radius: 30px; font-size: 1rem; font-weight: 500;
-            text-decoration: none; transition: all 0.3s ease; white-space: nowrap;
-        }
+        .btn-primary, .btn-secondary { padding: 14px 28px; border-radius: 30px; font-size: 1rem; font-weight: 500; text-decoration: none; transition: all 0.3s ease; white-space: nowrap; }
         .btn-primary { background: var(--text-main); color: #ffffff; box-shadow: 0 8px 20px rgba(0,0,0,0.1); }
         .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 12px 24px rgba(0,0,0,0.15); }
         .btn-secondary { background: rgba(255, 255, 255, 0.5); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); color: var(--text-main); border: 1px solid var(--glass-border); }
@@ -106,25 +96,17 @@
 
         /* --- 4. Live Analytics Dashboard --- */
         .analytics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: clamp(16px, 3vw, 24px); width: 100%; max-width: 1000px; margin-top: 1rem; }
-        .stat-card {
-            background: rgba(255, 255, 255, 0.6); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-            border: 1px solid var(--glass-border); border-radius: 24px; padding: clamp(1.5rem, 4vw, 2.5rem) 1.5rem;
-            text-align: center; box-shadow: 0 4px 24px rgba(0,0,0,0.02); transition: transform 0.4s ease;
-        }
+        .stat-card { background: rgba(255, 255, 255, 0.6); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid var(--glass-border); border-radius: 24px; padding: clamp(1.5rem, 4vw, 2.5rem) 1.5rem; text-align: center; box-shadow: 0 4px 24px rgba(0,0,0,0.02); transition: transform 0.4s ease; }
         .stat-card:hover { transform: translateY(-5px); }
         .stat-number { font-size: clamp(2.5rem, 6vw, 3.5rem); font-weight: 700; color: var(--accent); letter-spacing: -0.03em; line-height: 1; margin-bottom: 0.5rem; }
         .stat-label { font-size: clamp(0.9rem, 2vw, 1rem); font-weight: 500; color: var(--text-muted); }
 
-        /* --- 5. Hall of Fame (Responsive Carousel) --- */
+        /* --- 5. Hall of Fame (Perfect Aspect Ratio Images) --- */
         .carousel-wrapper { width: 100vw; position: relative; padding: 40px 0 60px; display: flex; align-items: center; }
         .carousel-wrapper::before, .carousel-wrapper::after { content: ""; position: absolute; top: 0; width: 15vw; height: 100%; z-index: 5; pointer-events: none; }
         .carousel-wrapper::before { left: 0; background: linear-gradient(to right, var(--bg-color) 0%, rgba(251,251,253,0) 100%); }
         .carousel-wrapper::after { right: 0; background: linear-gradient(to left, var(--bg-color) 0%, rgba(251,251,253,0) 100%); }
-        .carousel-track {
-            display: flex; gap: 30px; 
-            padding: 0 calc(50vw - 150px); 
-            overflow-x: auto; scroll-snap-type: x mandatory; scroll-behavior: smooth; scrollbar-width: none; 
-        }
+        .carousel-track { display: flex; gap: 30px; padding: 0 calc(50vw - 150px); overflow-x: auto; scroll-snap-type: x mandatory; scroll-behavior: smooth; scrollbar-width: none; }
         .carousel-track::-webkit-scrollbar { display: none; }
         
         .student-card {
@@ -137,7 +119,18 @@
         .student-card.active, .student-card:hover { transform: scale(1.05) translateY(-5px); opacity: 1; background: #ffffff; box-shadow: 0 20px 50px rgba(0, 113, 227, 0.08), inset 0 0 0 1px rgba(255,255,255,1); z-index: 10; }
         .student-card::after { content: ''; position: absolute; top: 0; left: -150%; width: 50%; height: 100%; background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.6) 50%, rgba(255,255,255,0) 100%); transform: skewX(-25deg); transition: 1s ease; pointer-events: none; }
         .student-card:hover::after { left: 200%; }
-        .student-img { width: 100%; height: 220px; object-fit: cover; background: #e5e5ea; transition: transform 1.2s ease; }
+
+        .student-img { 
+            width: 100%; 
+            height: auto;
+            aspect-ratio: 4 / 3; 
+            object-fit: cover; 
+            object-position: top center;
+            display: block;
+            background: #e5e5ea; 
+            transition: transform 1.2s ease; 
+        }
+        
         .student-card.active .student-img { transform: scale(1.02); } 
         .student-info { padding: 1.5rem; text-align: center; }
         .student-name { font-size: 1.2rem; font-weight: 600; letter-spacing: -0.01em;}
@@ -161,7 +154,7 @@
         .res-text span { font-size: 0.85rem; color: var(--text-muted); }
         .download-icon { color: var(--accent); flex-shrink: 0; margin-left: 15px;}
 
-        /* --- 8. Calendar Styling (Responsive Grid) --- */
+        /* --- 8. Calendar Styling --- */
         .calendar-container { width: 100%; max-width: 900px; background: #ffffff; border-radius: 24px; padding: clamp(1.5rem, 5vw, 2.5rem); box-shadow: 0 8px 32px rgba(0,0,0,0.03); border: 1px solid rgba(0,0,0,0.02); }
         .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: clamp(4px, 1.5vw, 12px); }
         .day-name { text-align: center; font-weight: 500; color: var(--text-muted); font-size: clamp(0.7rem, 2vw, 0.85rem); padding-bottom: 10px;}
@@ -193,7 +186,6 @@
 
         /* Mobile specific overrides */
         @media (max-width: 768px) {
-            nav ul { gap: 1.5rem; }
             .hero-title-wrapper { min-height: 90px; }
             .hero-buttons { flex-direction: column; width: 100%; max-width: 300px;}
             .btn-primary, .btn-secondary { width: 100%; text-align: center;}
@@ -204,12 +196,15 @@
 
     <header>
         <div class="logo"><img src="image_f5119a.png" alt="DIHM Logo"></div>
-        <nav>
-            <ul>
-                <li><a href="#placements">Hall of Fame</a></li>
-                <li><a href="#calendar">Calendar</a></li>
-                <li><a href="#resources">Resources</a></li>
-            </ul>
+        
+        <nav class="dropdown" id="navDropdown">
+            <button class="menu-btn" id="menuBtn">Menu</button>
+            <div class="dropdown-menu">
+                <a href="#placements">Hall of Fame</a>
+                <a href="#calendar">Placement Calendar</a>
+                <a href="#it-spotlight">17-Week IT</a>
+                <a href="#resources">Resources Hub</a>
+            </div>
         </nav>
     </header>
 
@@ -366,44 +361,54 @@
     </div>
 
     <script>
+        // --- DROPDOWN MENU LOGIC ---
+        const dropdown = document.getElementById('navDropdown');
+        const menuBtn = document.getElementById('menuBtn');
+        const dropLinks = document.querySelectorAll('.dropdown-menu a');
+
+        menuBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            dropdown.classList.toggle('active');
+        });
+
+        document.addEventListener('click', (e) => {
+            if(!dropdown.contains(e.target)) {
+                dropdown.classList.remove('active');
+            }
+        });
+
+        dropLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                dropdown.classList.remove('active');
+            });
+        });
+
         // --- 1. HUMAN TYPEWRITER ANIMATION LOGIC ---
         const textElement = document.getElementById('tpcText');
-        
-        // Helper function to pause execution for 'ms' milliseconds
         const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
         async function runTypewriter() {
-            // Wait 1.5 seconds so user notices the page loaded
             await sleep(1500);
-
-            // Backspace "C", then "P"
             textElement.innerText = "TP";
             await sleep(150);
             textElement.innerText = "T";
             await sleep(400); 
 
-            // Type the rest of the text
             const appendText = "raining & Placement Cell";
             for (let i = 0; i < appendText.length; i++) {
                 textElement.innerText += appendText[i];
-                // Randomize typing speed slightly (50ms - 80ms) for human realism
                 await sleep(50 + Math.random() * 30); 
             }
 
-            // Hold so people can read it
             await sleep(3500);
 
-            // Delete text rapidly
             let currentFull = textElement.innerText;
             for (let i = currentFull.length; i > 1; i--) {
                 textElement.innerText = currentFull.substring(0, i - 1);
-                // Fast deleting speed
                 await sleep(30); 
             }
 
             await sleep(400); 
-
-            // Restore "TPC"
             textElement.innerText = "TP";
             await sleep(150);
             textElement.innerText = "TPC";
