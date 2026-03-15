@@ -37,6 +37,22 @@
         html { scroll-behavior: smooth; }
         body { background-color: var(--bg-color); color: var(--text-main); overflow-x: hidden; }
 
+        /* --- Unified Loading Screen --- */
+        #pageLoader { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: var(--bg-color); display: flex; flex-direction: column; 
+            justify-content: center; align-items: center; z-index: 9999; 
+            transition: opacity 0.5s ease, visibility 0.5s ease; 
+        }
+        #pageLoader.hidden { opacity: 0; visibility: hidden; }
+        .spinner { 
+            width: 44px; height: 44px; border: 3px solid var(--border); 
+            border-top-color: var(--accent); border-radius: 50%; 
+            animation: spin 1s cubic-bezier(0.5, 0, 0.5, 1) infinite; 
+            margin-bottom: 12px; 
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
         /* --- 2. Solid Glass Feel Header & Pristine Dropdown --- */
         header {
             position: fixed; top: 0; width: 100%; height: var(--header-height);
@@ -137,18 +153,13 @@
         .carousel-wrapper::before, .it-carousel-container::before { left: 0; background: linear-gradient(to right, var(--bg-color) 0%, rgba(251,251,253,0) 100%); }
         .carousel-wrapper::after, .it-carousel-container::after { right: 0; background: linear-gradient(to left, var(--bg-color) 0%, rgba(251,251,253,0) 100%); }
         
-        .carousel-track { 
-            display: flex; gap: 30px; 
-            padding: 0 calc(50vw - 150px); 
-            overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; 
+        .carousel-track, .it-track {
             scroll-behavior: smooth;
-        }
-        .it-track {
             display: flex; gap: 30px; 
-            padding: 0 calc(50vw - 200px); 
             overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; 
-            scroll-behavior: smooth;
         }
+        .carousel-track { padding: 0 calc(50vw - 150px); }
+        .it-track { padding: 0 calc(50vw - 200px); }
         .carousel-track::-webkit-scrollbar, .it-track::-webkit-scrollbar { display: none; }
         
         .student-card {
@@ -156,8 +167,8 @@
             background: rgba(255, 255, 255, 0.4); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
             border-radius: 24px; border: 1px solid rgba(255, 255, 255, 0.6); overflow: hidden; position: relative;
             transform: scale(0.85); opacity: 0.4;
-            /* Smoother curve for mobile rendering */
             transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.6s ease, box-shadow 0.6s ease;
+            scroll-margin-inline-start: calc(50vw - 150px);
         }
         .student-card.active { transform: scale(1.05); opacity: 1; background: #ffffff; box-shadow: 0 20px 50px rgba(0, 113, 227, 0.12); z-index: 10; }
         .student-img { width: 100%; height: auto; aspect-ratio: 4 / 3; object-fit: cover; object-position: top center; display: block; background: #e5e5ea; transition: transform 0.8s ease; }
@@ -173,11 +184,15 @@
             box-shadow: 0 4px 20px rgba(0,0,0,0.03); border: 1px solid rgba(0,0,0,0.02); 
             transform: scale(0.85); opacity: 0.5;
             transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.6s ease, box-shadow 0.6s ease; 
+            scroll-margin-inline-start: calc(50vw - 200px);
         }
         .it-card.active { transform: scale(1.05); opacity: 1; box-shadow: 0 15px 40px rgba(0,0,0,0.08); z-index: 10; }
         @media (max-width: 768px) { 
             .it-track { padding: 0 calc(50vw - 42.5vw); }
-            .it-card { width: 85vw; } 
+            .it-card { 
+                width: 85vw; 
+                scroll-margin-inline-start: calc(50vw - 42.5vw);
+            } 
         }
         .it-img { width: 100%; height: clamp(180px, 20vw, 200px); object-fit: cover; }
         .it-info { padding: 1.5rem; }
@@ -240,6 +255,11 @@
     </style>
 </head>
 <body onload="window.scrollTo(0,0);">
+
+    <div id="pageLoader">
+        <div class="spinner"></div>
+        <div style="font-weight: 600; color: var(--text-muted); font-size: 1rem; letter-spacing: 0.02em;">Loading DIHM Portal...</div>
+    </div>
 
     <div class="menu-overlay" id="menuOverlay"></div>
 
@@ -399,7 +419,7 @@
     </div>
 
     <script>
-        // --- ADVANCED CSV PARSER ---
+        // --- 1. ADVANCED CSV PARSER ---
         function parseCSVRow(text) {
             let result = [];
             let cur = '';
@@ -501,7 +521,7 @@
         }, { threshold: 0.5 });
         counters.forEach(counter => counterObserver.observe(counter));
 
-        // --- HIGH-PERFORMANCE INFINITE CAROUSEL ENGINE ---
+        // --- HIGH-PERFORMANCE ANTI-JITTER CAROUSEL ENGINE ---
         function updateCenterFocus(track, cardSelector) {
             window.requestAnimationFrame(() => {
                 const cards = track.querySelectorAll(cardSelector);
@@ -539,7 +559,7 @@
                 const itemWidth = originalItems[0].offsetWidth + gap;
                 const setWidth = itemWidth * originalCount;
                 
-                // Start in the middle
+                // Start in the middle set
                 track.scrollLeft = setWidth;
                 
                 let isInteracting = false;
@@ -558,18 +578,17 @@
                         }
                         updateCenterFocus(track, cardSelector);
                     }
-                });
+                }, { passive: true });
 
                 let autoScrollTimer;
                 function advanceCarousel() {
                     if (isInteracting) return;
                     
-                    // Check if we need to reset before scrolling
+                    // Check if we need to reset before scrolling to avoid hitting the wall
                     if (track.scrollLeft >= setWidth * 2 - (itemWidth / 2)) {
                         track.style.scrollBehavior = 'auto';
                         track.scrollLeft -= setWidth;
-                        // Force DOM reflow so jump is invisible
-                        void track.offsetWidth; 
+                        void track.offsetWidth; // Force DOM reflow so jump is invisible
                     }
                     
                     track.style.scrollBehavior = 'smooth';
@@ -585,7 +604,7 @@
                 }
                 startTimer();
 
-                // Advanced Pause/Resume Logic for Mobile & Desktop
+                // Advanced Pause/Resume Logic for Mobile Touch
                 const pause = () => { isInteracting = true; clearInterval(autoScrollTimer); };
                 
                 track.addEventListener('mouseenter', pause);
@@ -593,7 +612,7 @@
                 
                 track.addEventListener('touchstart', pause, {passive: true});
                 track.addEventListener('touchend', () => {
-                    // Give the user 3 seconds to read after they let go
+                    // Give the user 3 seconds to read after they let go before auto-scrolling resumes
                     setTimeout(() => { 
                         isInteracting = false; 
                         startTimer(); 
@@ -601,7 +620,7 @@
                 });
                 
                 updateCenterFocus(track, cardSelector);
-            }, 300); // Small delay to let CSS load first
+            }, 300); // Delay allows CSS and layout to render properly before measuring
         }
 
 
@@ -652,7 +671,7 @@
                 });
 
                 if(addedCount > 0) {
-                    initPremiumCarousel('carouselTrack', 4500, '.student-card');
+                    initPremiumCarousel('carouselTrack', 4500, '.student-card'); // 4.5s reading time
                 }
 
             } catch (error) {
@@ -663,18 +682,13 @@
                     <div class="student-card"><img src="/api/placeholder/320/240" class="student-img"><div class="student-info"><div class="student-name">Rahul Verma</div><div class="student-brand">Radisson Blu</div><div class="student-dept">MT</div></div></div>
                     <div class="student-card"><img src="/api/placeholder/320/240" class="student-img"><div class="student-info"><div class="student-name">Meera Kapoor</div><div class="student-brand">Compass Group</div><div class="student-dept">EDP</div></div></div>
                 `;
-                initPremiumCarousel('carouselTrack', 4500, '.student-card');
+                initPremiumCarousel('carouselTrack', 4500, '.student-card'); // 4.5s reading time
             }
         }
 
-        window.addEventListener('load', () => {
-            fetchHallOfFame(); 
-            initPremiumCarousel('itTrack', 6000, '.it-card'); // 6 seconds for IT reading time
-        });
-
-
         // --- DYNAMIC CALENDAR LOGIC ---
-        const CALENDAR_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRQW3sPgmWQcHCJ8vysjCGp6_-3qho5Gj50j1y_rt3wHOVH1-g1M8B_Zxb6kLNQrb4W75-MnO8SZIdj/pub?output=csv
+        const CALENDAR_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRQW3sPgmWQcHCJ8vysjCGp6_-3qho5Gj50j1y_rt3wHOVH1-g1M8B_Zxb6kLNQrb4W75-MnO8SZIdj/pub?output=csv'; 
+        let eventsData = [];
         
         const today = new Date(); 
         let currentDisplayMonth = today.getMonth(); 
@@ -773,7 +787,18 @@
                 calendarGrid.appendChild(dayDiv);
             }
         }
-        fetchCalendarData();
+
+        // --- MASTER LOAD MANAGER ---
+        window.addEventListener('load', async () => {
+            await fetchHallOfFame(); 
+            fetchCalendarData();
+            initPremiumCarousel('itTrack', 6000, '.it-card'); // 6s reading time for IT 
+
+            const loader = document.getElementById('pageLoader');
+            setTimeout(() => {
+                loader.classList.add('hidden');
+            }, 400);
+        });
 
         // --- Glassmorphism Modal Logic ---
         const modal = document.getElementById('interviewModal');
