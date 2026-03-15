@@ -141,11 +141,13 @@
             display: flex; gap: 30px; 
             padding: 0 calc(50vw - 150px); 
             overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; 
+            scroll-behavior: smooth;
         }
         .it-track {
             display: flex; gap: 30px; 
             padding: 0 calc(50vw - 200px); 
             overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; 
+            scroll-behavior: smooth;
         }
         .carousel-track::-webkit-scrollbar, .it-track::-webkit-scrollbar { display: none; }
         
@@ -154,7 +156,8 @@
             background: rgba(255, 255, 255, 0.4); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
             border-radius: 24px; border: 1px solid rgba(255, 255, 255, 0.6); overflow: hidden; position: relative;
             transform: scale(0.85); opacity: 0.4;
-            transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.5s ease, box-shadow 0.5s ease;
+            /* Smoother curve for mobile rendering */
+            transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.6s ease, box-shadow 0.6s ease;
         }
         .student-card.active { transform: scale(1.05); opacity: 1; background: #ffffff; box-shadow: 0 20px 50px rgba(0, 113, 227, 0.12); z-index: 10; }
         .student-img { width: 100%; height: auto; aspect-ratio: 4 / 3; object-fit: cover; object-position: top center; display: block; background: #e5e5ea; transition: transform 0.8s ease; }
@@ -169,7 +172,7 @@
             background: #fff; border-radius: 20px; overflow: hidden; 
             box-shadow: 0 4px 20px rgba(0,0,0,0.03); border: 1px solid rgba(0,0,0,0.02); 
             transform: scale(0.85); opacity: 0.5;
-            transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.5s ease, box-shadow 0.5s ease; 
+            transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.6s ease, box-shadow 0.6s ease; 
         }
         .it-card.active { transform: scale(1.05); opacity: 1; box-shadow: 0 15px 40px rgba(0,0,0,0.08); z-index: 10; }
         @media (max-width: 768px) { 
@@ -396,8 +399,7 @@
     </div>
 
     <script>
-        // --- 1. ADVANCED CSV PARSER ---
-        // This ensures names with spaces and complex strings are parsed perfectly without breaking!
+        // --- ADVANCED CSV PARSER ---
         function parseCSVRow(text) {
             let result = [];
             let cur = '';
@@ -499,16 +501,36 @@
         }, { threshold: 0.5 });
         counters.forEach(counter => counterObserver.observe(counter));
 
-        // --- TRUE INFINITE CAROUSEL ENGINE ---
-        function initPremiumCarousel(trackId, interval, cardSelector) {
+        // --- HIGH-PERFORMANCE INFINITE CAROUSEL ENGINE ---
+        function updateCenterFocus(track, cardSelector) {
+            window.requestAnimationFrame(() => {
+                const cards = track.querySelectorAll(cardSelector);
+                const centerPos = track.scrollLeft + (track.clientWidth / 2);
+                
+                let closestDist = Infinity;
+                let closestCard = null;
+                
+                cards.forEach(card => {
+                    card.classList.remove('active');
+                    const cardCenter = card.offsetLeft + (card.offsetWidth / 2);
+                    const dist = Math.abs(centerPos - cardCenter);
+                    if (dist < closestDist) {
+                        closestDist = dist;
+                        closestCard = card;
+                    }
+                });
+                if (closestCard) closestCard.classList.add('active');
+            });
+        }
+
+        function initPremiumCarousel(trackId, intervalTime, cardSelector) {
             const track = document.getElementById(trackId);
             const originalItems = Array.from(track.children);
             const originalCount = originalItems.length;
             
             if(originalCount === 0) return; 
 
-            // Clone to ensure infinite scroll illusion
-            originalItems.forEach(item => track.appendChild(item.cloneNode(true)));
+            // Clone sets for infinite loop illusion
             originalItems.forEach(item => track.appendChild(item.cloneNode(true)));
             originalItems.forEach(item => track.appendChild(item.cloneNode(true)));
             
@@ -517,51 +539,69 @@
                 const itemWidth = originalItems[0].offsetWidth + gap;
                 const setWidth = itemWidth * originalCount;
                 
+                // Start in the middle
                 track.scrollLeft = setWidth;
                 
+                let isInteracting = false;
+                
                 track.addEventListener('scroll', () => {
-                    if (track.scrollLeft >= setWidth * 2) {
-                        track.scrollLeft -= setWidth;
-                    } else if (track.scrollLeft <= 0) {
-                        track.scrollLeft += setWidth;
+                    if (isInteracting) {
+                        // Invisible boundary jump if user manually scrolls too far
+                        if (track.scrollLeft >= setWidth * 2) {
+                            track.style.scrollBehavior = 'auto';
+                            track.scrollLeft -= setWidth;
+                            track.style.scrollBehavior = 'smooth';
+                        } else if (track.scrollLeft <= 0) {
+                            track.style.scrollBehavior = 'auto';
+                            track.scrollLeft += setWidth;
+                            track.style.scrollBehavior = 'smooth';
+                        }
+                        updateCenterFocus(track, cardSelector);
                     }
-                    updateCenterFocus(track, cardSelector);
                 });
 
-                let timer;
-                function start() {
-                    timer = setInterval(() => {
-                        track.scrollBy({ left: itemWidth, behavior: 'smooth' });
-                    }, interval);
+                let autoScrollTimer;
+                function advanceCarousel() {
+                    if (isInteracting) return;
+                    
+                    // Check if we need to reset before scrolling
+                    if (track.scrollLeft >= setWidth * 2 - (itemWidth / 2)) {
+                        track.style.scrollBehavior = 'auto';
+                        track.scrollLeft -= setWidth;
+                        // Force DOM reflow so jump is invisible
+                        void track.offsetWidth; 
+                    }
+                    
+                    track.style.scrollBehavior = 'smooth';
+                    track.scrollLeft += itemWidth;
+                    
+                    // Wait for smooth scroll to finish before updating focus
+                    setTimeout(() => updateCenterFocus(track, cardSelector), 600);
                 }
-                start();
 
-                track.addEventListener('mouseenter', () => clearInterval(timer));
-                track.addEventListener('mouseleave', start);
-                track.addEventListener('touchstart', () => clearInterval(timer), {passive: true});
-                track.addEventListener('touchend', start);
+                function startTimer() {
+                    clearInterval(autoScrollTimer);
+                    autoScrollTimer = setInterval(advanceCarousel, intervalTime);
+                }
+                startTimer();
+
+                // Advanced Pause/Resume Logic for Mobile & Desktop
+                const pause = () => { isInteracting = true; clearInterval(autoScrollTimer); };
+                
+                track.addEventListener('mouseenter', pause);
+                track.addEventListener('mouseleave', () => { isInteracting = false; startTimer(); });
+                
+                track.addEventListener('touchstart', pause, {passive: true});
+                track.addEventListener('touchend', () => {
+                    // Give the user 3 seconds to read after they let go
+                    setTimeout(() => { 
+                        isInteracting = false; 
+                        startTimer(); 
+                    }, 3000); 
+                });
                 
                 updateCenterFocus(track, cardSelector);
-            }, 100);
-        }
-
-        function updateCenterFocus(track, cardSelector) {
-            const cards = track.querySelectorAll(cardSelector);
-            const centerPos = track.scrollLeft + (track.clientWidth / 2);
-            
-            let closestDist = Infinity;
-            let closestCard = null;
-            
-            cards.forEach(card => {
-                card.classList.remove('active');
-                const cardCenter = card.offsetLeft + (card.offsetWidth / 2);
-                const dist = Math.abs(centerPos - cardCenter);
-                if (dist < closestDist) {
-                    closestDist = dist;
-                    closestCard = card;
-                }
-            });
-            if (closestCard) closestCard.classList.add('active');
+            }, 300); // Small delay to let CSS load first
         }
 
 
@@ -612,7 +652,7 @@
                 });
 
                 if(addedCount > 0) {
-                    initPremiumCarousel('carouselTrack', 3500, '.student-card');
+                    initPremiumCarousel('carouselTrack', 4500, '.student-card');
                 }
 
             } catch (error) {
@@ -623,19 +663,18 @@
                     <div class="student-card"><img src="/api/placeholder/320/240" class="student-img"><div class="student-info"><div class="student-name">Rahul Verma</div><div class="student-brand">Radisson Blu</div><div class="student-dept">MT</div></div></div>
                     <div class="student-card"><img src="/api/placeholder/320/240" class="student-img"><div class="student-info"><div class="student-name">Meera Kapoor</div><div class="student-brand">Compass Group</div><div class="student-dept">EDP</div></div></div>
                 `;
-                initPremiumCarousel('carouselTrack', 3500, '.student-card');
+                initPremiumCarousel('carouselTrack', 4500, '.student-card');
             }
         }
 
         window.addEventListener('load', () => {
             fetchHallOfFame(); 
-            initPremiumCarousel('itTrack', 4500, '.it-card');
+            initPremiumCarousel('itTrack', 6000, '.it-card'); // 6 seconds for IT reading time
         });
 
 
         // --- DYNAMIC CALENDAR LOGIC ---
-        const CALENDAR_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRQW3sPgmWQcHCJ8vysjCGp6_-3qho5Gj50j1y_rt3wHOVH1-g1M8B_Zxb6kLNQrb4W75-MnO8SZIdj/pub?output=csv'; 
-        let eventsData = [];
+        const CALENDAR_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRQW3sPgmWQcHCJ8vysjCGp6_-3qho5Gj50j1y_rt3wHOVH1-g1M8B_Zxb6kLNQrb4W75-MnO8SZIdj/pub?output=csv
         
         const today = new Date(); 
         let currentDisplayMonth = today.getMonth(); 
