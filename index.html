@@ -23,7 +23,6 @@
             --accent: #0071e3;
             --glass-border: rgba(255, 255, 255, 0.4);
             --success: #28a745;
-            /* Dynamic Header Height for perfectly scaling logos */
             --header-height: clamp(64px, 8vw, 80px);
         }
 
@@ -49,9 +48,8 @@
             border-bottom: 1px solid rgba(0,0,0,0.05);
         }
 
-        /* --- RESPONSIVE LOGO --- */
         .logo img { 
-            height: clamp(36px, 6vw, 54px); /* Scales between 36px and 54px depending on screen width */
+            height: clamp(36px, 6vw, 54px); 
             width: auto; 
             max-width: 250px;
             object-fit: contain; 
@@ -60,7 +58,6 @@
         }
         .logo img:hover { opacity: 0.8; }
 
-        /* Frosted Background Overlay for Menu */
         .menu-overlay {
             position: fixed; top: var(--header-height); left: 0; width: 100vw; height: calc(100vh - var(--header-height));
             background: rgba(255, 255, 255, 0.3);
@@ -244,7 +241,7 @@
     <div class="menu-overlay" id="menuOverlay"></div>
 
     <header>
-        <div class="logo"><img src="image_f5119a.png" alt="DIHM Logo"></div>
+        <div class="logo"><img src="DIHM.png" alt="DIHM Logo"></div>
         
         <nav class="dropdown" id="navDropdown">
             <button class="menu-btn" id="menuBtn">Menu</button>
@@ -399,6 +396,27 @@
     </div>
 
     <script>
+        // --- 1. ADVANCED CSV PARSER ---
+        // This ensures names with spaces and complex strings are parsed perfectly without breaking!
+        function parseCSVRow(text) {
+            let result = [];
+            let cur = '';
+            let inQuotes = false;
+            for (let i = 0; i < text.length; i++) {
+                const c = text[i];
+                if (c === '"') {
+                    inQuotes = !inQuotes;
+                } else if (c === ',' && !inQuotes) {
+                    result.push(cur.trim());
+                    cur = '';
+                } else {
+                    cur += c;
+                }
+            }
+            result.push(cur.trim());
+            return result;
+        }
+
         // --- DROPDOWN MENU & FROSTED OVERLAY LOGIC ---
         const dropdown = document.getElementById('navDropdown');
         const menuBtn = document.getElementById('menuBtn');
@@ -425,7 +443,7 @@
             });
         });
 
-        // --- 1. HUMAN TYPEWRITER ANIMATION LOGIC ---
+        // --- HUMAN TYPEWRITER ANIMATION LOGIC ---
         const textElement = document.getElementById('tpcText');
         const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
@@ -457,7 +475,7 @@
         }
         window.addEventListener('load', runTypewriter);
 
-        // --- 2. Number Counter Animation Logic ---
+        // --- Number Counter Animation Logic ---
         const counters = document.querySelectorAll('.stat-number');
         const counterObserver = new IntersectionObserver((entries, observer) => {
             entries.forEach(entry => {
@@ -481,29 +499,27 @@
         }, { threshold: 0.5 });
         counters.forEach(counter => counterObserver.observe(counter));
 
-        // --- 3. TRUE INFINITE CAROUSEL ENGINE ---
+        // --- TRUE INFINITE CAROUSEL ENGINE ---
         function initPremiumCarousel(trackId, interval, cardSelector) {
             const track = document.getElementById(trackId);
             const originalItems = Array.from(track.children);
             const originalCount = originalItems.length;
             
-            if(originalCount === 0) return; // Prevent breaking if empty
+            if(originalCount === 0) return; 
 
-            // Clone 3 times to ensure infinite scroll illusion
+            // Clone to ensure infinite scroll illusion
             originalItems.forEach(item => track.appendChild(item.cloneNode(true)));
             originalItems.forEach(item => track.appendChild(item.cloneNode(true)));
             originalItems.forEach(item => track.appendChild(item.cloneNode(true)));
             
             setTimeout(() => {
-                const gap = 30; // 30px gap defined in CSS
+                const gap = 30; 
                 const itemWidth = originalItems[0].offsetWidth + gap;
                 const setWidth = itemWidth * originalCount;
                 
-                // Jump to the middle set initially so user can scroll seamlessly
                 track.scrollLeft = setWidth;
                 
                 track.addEventListener('scroll', () => {
-                    // Infinite Loop seamless jump
                     if (track.scrollLeft >= setWidth * 2) {
                         track.scrollLeft -= setWidth;
                     } else if (track.scrollLeft <= 0) {
@@ -529,7 +545,6 @@
             }, 100);
         }
 
-        // --- Active Center Scale Focus ---
         function updateCenterFocus(track, cardSelector) {
             const cards = track.querySelectorAll(cardSelector);
             const centerPos = track.scrollLeft + (track.clientWidth / 2);
@@ -550,26 +565,15 @@
         }
 
 
-        // --- 4. FETCH HALL OF FAME FROM GOOGLE SHEETS ---
-        // PASTE YOUR PUBLISHED GOOGLE SHEET LINK FOR HALL OF FAME HERE:
-        // Format Headers: Name | Brand | Department | Image URL
+        // --- FETCH HALL OF FAME FROM GOOGLE SHEETS ---
         const HALL_OF_FAME_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRIpy-Ab3aiM9wD3wQp_Ln1hv_Q9GqXdH6s4qcmdkqH6-K1mb8frjFHuWritGs88XYT-EKBw8v9tLW_/pub?output=csv'; 
         
-        // Smart Google Drive Image Link Converter
         function formatImageUrl(url) {
             if (!url) return '/api/placeholder/320/240';
-            
-            // Check for Google Drive /file/d/ format
             const gDriveMatch = url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
-            if (gDriveMatch && gDriveMatch[1]) {
-                return `https://drive.google.com/uc?export=view&id=${gDriveMatch[1]}`;
-            }
-            // Check for Google Drive open?id= format
+            if (gDriveMatch && gDriveMatch[1]) return `https://drive.google.com/uc?export=view&id=${gDriveMatch[1]}`;
             const gDriveMatch2 = url.match(/id=([a-zA-Z0-9_-]+)/);
-            if (gDriveMatch2 && gDriveMatch2[1] && url.includes('drive.google.com')) {
-                return `https://drive.google.com/uc?export=view&id=${gDriveMatch2[1]}`;
-            }
-            // If it's a local path like images/photo.png or standard URL, return as is
+            if (gDriveMatch2 && gDriveMatch2[1] && url.includes('drive.google.com')) return `https://drive.google.com/uc?export=view&id=${gDriveMatch2[1]}`;
             return url; 
         }
 
@@ -581,17 +585,16 @@
                 const data = await response.text();
                 const rows = data.split('\n').slice(1); 
                 
-                track.innerHTML = ''; // Clear loading text
+                track.innerHTML = ''; 
                 
                 let addedCount = 0;
                 rows.forEach(row => {
-                    const cols = row.match(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g) || row.split(',');
-                    if(cols.length >= 3 && cols[0].trim() !== '') {
-                        const name = cols[0].replace(/"/g, '').trim();
-                        const brand = cols[1].replace(/"/g, '').trim();
-                        const dept = cols[2].replace(/"/g, '').trim();
-                        
-                        let rawImg = cols[3] ? cols[3].replace(/"/g, '').trim() : '';
+                    const cols = parseCSVRow(row);
+                    if(cols.length >= 3 && cols[0] !== '') {
+                        const name = cols[0];
+                        const brand = cols[1];
+                        const dept = cols[2];
+                        let rawImg = cols[3] || '';
                         let finalImgUrl = formatImageUrl(rawImg);
 
                         track.innerHTML += `
@@ -624,16 +627,13 @@
             }
         }
 
-        // Initialize carousels after window loads
         window.addEventListener('load', () => {
             fetchHallOfFame(); 
             initPremiumCarousel('itTrack', 4500, '.it-card');
         });
 
 
-        // --- 5. DYNAMIC CALENDAR LOGIC (With Month Nav & Google Sheets) ---
-        // PASTE YOUR PUBLISHED GOOGLE SHEET LINK FOR CALENDAR HERE:
-        // Format Headers: Date (YYYY-MM-DD) | Brand | Requirements
+        // --- DYNAMIC CALENDAR LOGIC ---
         const CALENDAR_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRQW3sPgmWQcHCJ8vysjCGp6_-3qho5Gj50j1y_rt3wHOVH1-g1M8B_Zxb6kLNQrb4W75-MnO8SZIdj/pub?output=csv'; 
         let eventsData = [];
         
@@ -649,16 +649,16 @@
                 const rows = data.split('\n');
                 
                 eventsData = rows.slice(1).map(row => {
-                    const columns = row.match(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g) || row.split(',');
-                    if(columns.length >= 3) {
+                    const columns = parseCSVRow(row);
+                    if(columns.length >= 3 && columns[0] !== "") {
                         return {
-                            date: columns[0].replace(/"/g, '').trim(),
-                            brand: columns[1].replace(/"/g, '').trim(),
-                            reqs: columns[2].replace(/"/g, '').trim()
+                            date: columns[0],
+                            brand: columns[1],
+                            reqs: columns[2]
                         };
                     }
                     return null;
-                }).filter(item => item !== null && item.date !== "");
+                }).filter(item => item !== null);
 
                 renderCalendar(); 
             } catch (error) {
@@ -736,7 +736,7 @@
         }
         fetchCalendarData();
 
-        // --- 6. Glassmorphism Modal Logic ---
+        // --- Glassmorphism Modal Logic ---
         const modal = document.getElementById('interviewModal');
         function openModal(data) {
             document.getElementById('mBrand').innerText = data.brand;
