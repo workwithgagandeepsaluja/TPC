@@ -2,9 +2,17 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>DIHM | Training & Placement Cell</title>
     <link rel="icon" type="image/png" href="DIHM.png">
+    
+    <script>
+        if ('scrollRestoration' in history) {
+            history.scrollRestoration = 'manual';
+        }
+        window.scrollTo(0, 0);
+    </script>
+
     <style>
         /* --- 1. Apple-Like Minimalistic Theme --- */
         :root {
@@ -14,6 +22,7 @@
             --text-muted: #86868b;
             --accent: #0071e3;
             --glass-border: rgba(255, 255, 255, 0.4);
+            --success: #28a745;
         }
 
         * {
@@ -41,8 +50,16 @@
         .logo img { height: 36px; width: auto; mix-blend-mode: multiply; transition: opacity 0.3s ease; }
         .logo img:hover { opacity: 0.8; }
 
-        /* Cleaned Up Menu */
-        .dropdown { position: relative; }
+        /* Frosted Background Overlay for Menu */
+        .menu-overlay {
+            position: fixed; top: 64px; left: 0; width: 100vw; height: calc(100vh - 64px);
+            background: rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+            z-index: 990; opacity: 0; visibility: hidden; transition: all 0.3s ease;
+        }
+        .menu-overlay.active { opacity: 1; visibility: visible; }
+
+        .dropdown { position: relative; z-index: 1001;}
         
         .menu-btn {
             background: transparent; border: none; cursor: pointer;
@@ -102,72 +119,95 @@
         .stat-number { font-size: clamp(2.5rem, 6vw, 3.5rem); font-weight: 700; color: var(--accent); letter-spacing: -0.03em; line-height: 1; margin-bottom: 0.5rem; }
         .stat-label { font-size: clamp(0.9rem, 2vw, 1rem); font-weight: 500; color: var(--text-muted); }
 
-        /* --- 5. Hall of Fame (Perfect Aspect Ratio Images) --- */
-        .carousel-wrapper { width: 100vw; position: relative; padding: 40px 0 60px; display: flex; align-items: center; }
-        .carousel-wrapper::before, .carousel-wrapper::after { content: ""; position: absolute; top: 0; width: 15vw; height: 100%; z-index: 5; pointer-events: none; }
-        .carousel-wrapper::before { left: 0; background: linear-gradient(to right, var(--bg-color) 0%, rgba(251,251,253,0) 100%); }
-        .carousel-wrapper::after { right: 0; background: linear-gradient(to left, var(--bg-color) 0%, rgba(251,251,253,0) 100%); }
-        .carousel-track { display: flex; gap: 30px; padding: 0 calc(50vw - 150px); overflow-x: auto; scroll-snap-type: x mandatory; scroll-behavior: smooth; scrollbar-width: none; }
-        .carousel-track::-webkit-scrollbar { display: none; }
+        /* --- 5. True Infinite Circular Carousels --- */
+        .carousel-wrapper, .it-carousel-container { 
+            width: 100vw; position: relative; padding: 40px 0 60px; overflow: hidden; 
+        }
+        .carousel-wrapper::before, .carousel-wrapper::after,
+        .it-carousel-container::before, .it-carousel-container::after { 
+            content: ""; position: absolute; top: 0; width: 15vw; height: 100%; z-index: 5; pointer-events: none; 
+        }
+        .carousel-wrapper::before, .it-carousel-container::before { left: 0; background: linear-gradient(to right, var(--bg-color) 0%, rgba(251,251,253,0) 100%); }
+        .carousel-wrapper::after, .it-carousel-container::after { right: 0; background: linear-gradient(to left, var(--bg-color) 0%, rgba(251,251,253,0) 100%); }
         
+        .carousel-track { 
+            display: flex; gap: 30px; 
+            padding: 0 calc(50vw - 150px); /* 150px is half of 300px */
+            overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; 
+        }
+        .it-track {
+            display: flex; gap: 30px; 
+            padding: 0 calc(50vw - 200px); /* 200px is half of 400px */
+            overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; 
+        }
+        .carousel-track::-webkit-scrollbar, .it-track::-webkit-scrollbar { display: none; }
+        
+        /* Hall of Fame Card */
         .student-card {
             scroll-snap-align: center; width: 300px; flex-shrink: 0;
             background: rgba(255, 255, 255, 0.4); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
             border-radius: 24px; border: 1px solid rgba(255, 255, 255, 0.6); overflow: hidden; position: relative;
-            transform: scale(0.85); opacity: 0.3;
-            transition: transform 1.2s cubic-bezier(0.22, 1, 0.36, 1), opacity 1.2s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 1.2s ease;
+            transform: scale(0.85); opacity: 0.4;
+            transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.5s ease, box-shadow 0.5s ease;
         }
-        .student-card.active, .student-card:hover { transform: scale(1.05) translateY(-5px); opacity: 1; background: #ffffff; box-shadow: 0 20px 50px rgba(0, 113, 227, 0.08), inset 0 0 0 1px rgba(255,255,255,1); z-index: 10; }
-        .student-card::after { content: ''; position: absolute; top: 0; left: -150%; width: 50%; height: 100%; background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.6) 50%, rgba(255,255,255,0) 100%); transform: skewX(-25deg); transition: 1s ease; pointer-events: none; }
-        .student-card:hover::after { left: 200%; }
-
-        .student-img { 
-            width: 100%; 
-            height: auto;
-            aspect-ratio: 4 / 3; 
-            object-fit: cover; 
-            object-position: top center;
-            display: block;
-            background: #e5e5ea; 
-            transition: transform 1.2s ease; 
-        }
-        
+        .student-card.active { transform: scale(1.05); opacity: 1; background: #ffffff; box-shadow: 0 20px 50px rgba(0, 113, 227, 0.12); z-index: 10; }
+        .student-img { width: 100%; height: auto; aspect-ratio: 4 / 3; object-fit: cover; object-position: top center; display: block; background: #e5e5ea; transition: transform 0.8s ease; }
         .student-card.active .student-img { transform: scale(1.02); } 
         .student-info { padding: 1.5rem; text-align: center; }
         .student-name { font-size: 1.2rem; font-weight: 600; letter-spacing: -0.01em;}
         .student-brand { font-size: 1rem; color: var(--text-muted); margin-top: 4px; }
         .student-dept { font-size: 0.8rem; font-weight: 600; color: var(--accent); margin-top: 10px; text-transform: uppercase; letter-spacing: 0.5px;}
 
-        /* --- 6. 17-Week IT Spotlight --- */
-        .it-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: clamp(20px, 4vw, 30px); width: 100%; max-width: 1000px; }
-        .it-card { background: #fff; border-radius: 20px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.03); border: 1px solid rgba(0,0,0,0.02); transition: transform 0.4s ease; }
-        .it-card:hover { transform: translateY(-8px); box-shadow: 0 12px 30px rgba(0,0,0,0.06); }
+        /* IT Card */
+        .it-card { 
+            scroll-snap-align: center; flex-shrink: 0; width: 400px;
+            background: #fff; border-radius: 20px; overflow: hidden; 
+            box-shadow: 0 4px 20px rgba(0,0,0,0.03); border: 1px solid rgba(0,0,0,0.02); 
+            transform: scale(0.85); opacity: 0.5;
+            transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.5s ease, box-shadow 0.5s ease; 
+        }
+        .it-card.active { transform: scale(1.05); opacity: 1; box-shadow: 0 15px 40px rgba(0,0,0,0.08); z-index: 10; }
+        @media (max-width: 768px) { 
+            .it-track { padding: 0 calc(50vw - 42.5vw); }
+            .it-card { width: 85vw; } 
+        }
         .it-img { width: 100%; height: clamp(180px, 20vw, 200px); object-fit: cover; }
         .it-info { padding: 1.5rem; }
         .it-title { font-size: 1.1rem; font-weight: 600; margin-bottom: 5px; }
         .it-desc { font-size: 0.95rem; color: var(--text-muted); line-height: 1.5; }
 
-        /* --- 7. Resources Hub --- */
+        /* --- 7. Resources Hub (Updated to External Links) --- */
         .resource-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; width: 100%; max-width: 1000px; }
-        .resource-card { background: rgba(255, 255, 255, 0.5); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 1px solid var(--glass-border); border-radius: 16px; padding: 1.5rem; display: flex; align-items: center; justify-content: space-between; transition: all 0.3s ease; cursor: pointer; text-decoration: none; color: var(--text-main); }
-        .resource-card:hover { background: #fff; border-color: var(--accent); }
+        .resource-card { background: rgba(255, 255, 255, 0.5); backdrop-filter: blur(10px); border: 1px solid var(--glass-border); border-radius: 16px; padding: 1.5rem; display: flex; align-items: center; justify-content: space-between; transition: all 0.3s ease; cursor: pointer; text-decoration: none; color: var(--text-main); }
+        .resource-card:hover { background: #fff; border-color: var(--accent); transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0,0,0,0.04); }
         .res-text strong { display: block; font-size: 1.05rem; margin-bottom: 4px; }
         .res-text span { font-size: 0.85rem; color: var(--text-muted); }
-        .download-icon { color: var(--accent); flex-shrink: 0; margin-left: 15px;}
+        .link-icon { color: var(--accent); flex-shrink: 0; margin-left: 15px;}
 
-        /* --- 8. Calendar Styling --- */
+        /* --- 8. Dynamic Calendar Styling --- */
         .calendar-container { width: 100%; max-width: 900px; background: #ffffff; border-radius: 24px; padding: clamp(1.5rem, 5vw, 2.5rem); box-shadow: 0 8px 32px rgba(0,0,0,0.03); border: 1px solid rgba(0,0,0,0.02); }
+        
+        .calendar-header-ui { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
+        .calendar-header-ui button { background: var(--bg-color); border: 1px solid var(--border); border-radius: 50%; width: 40px; height: 40px; cursor: pointer; font-size: 1.2rem; color: var(--text-main); transition: 0.2s ease; display: flex; justify-content: center; align-items: center; }
+        .calendar-header-ui button:hover { background: var(--accent); color: white; border-color: var(--accent); }
+        .calendar-header-ui h3 { font-size: 1.5rem; font-weight: 600; margin: 0; }
+
         .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: clamp(4px, 1.5vw, 12px); }
-        .day-name { text-align: center; font-weight: 500; color: var(--text-muted); font-size: clamp(0.7rem, 2vw, 0.85rem); padding-bottom: 10px;}
-        .calendar-day { aspect-ratio: 1; display: flex; flex-direction: column; justify-content: flex-start; padding: clamp(4px, 1.5vw, 12px); border-radius: clamp(8px, 2vw, 14px); border: 1px solid transparent; background: #fbfbfd; cursor: pointer; transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); position: relative; font-size: clamp(0.9rem, 2.5vw, 1.1rem); font-weight: 500; }
-        .calendar-day:hover { background: #ffffff; box-shadow: 0 4px 12px rgba(0,0,0,0.05); transform: scale(1.05); }
-        .calendar-day.past { color: #d2d2d7; pointer-events: none; background: transparent; }
-        .calendar-day.has-event { background: rgba(0, 113, 227, 0.05); color: var(--accent); border: 1px solid rgba(0, 113, 227, 0.1); }
-        .event-indicator { width: 6px; height: 6px; background: var(--accent); border-radius: 50%; margin-top: auto; align-self: center; }
+        .day-name { text-align: center; font-weight: 600; color: var(--text-muted); font-size: clamp(0.75rem, 2vw, 0.85rem); padding-bottom: 10px; text-transform: uppercase; letter-spacing: 0.5px;}
+        .calendar-day { aspect-ratio: 1; display: flex; flex-direction: column; justify-content: flex-start; padding: clamp(4px, 1.5vw, 12px); border-radius: clamp(8px, 2vw, 14px); border: 2px solid transparent; background: #fbfbfd; cursor: pointer; transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); position: relative; font-size: clamp(0.9rem, 2.5vw, 1.1rem); font-weight: 500; }
+        
+        .calendar-day:hover { background: #ffffff; box-shadow: 0 4px 12px rgba(0,0,0,0.08); transform: scale(1.05); z-index: 2; }
+        
+        .calendar-day.today { color: var(--success) !important; font-weight: 700; border-color: var(--success) !important; background: rgba(40, 167, 69, 0.05) !important; }
+        .calendar-day.upcoming-event { color: var(--accent); background: rgba(0, 113, 227, 0.05); border-color: rgba(0, 113, 227, 0.2); }
+        .calendar-day.past-event { color: #a1a1aa; background: rgba(0, 0, 0, 0.02); border-color: rgba(0, 0, 0, 0.05); pointer-events: none; }
+        .event-indicator { width: 6px; height: 6px; border-radius: 50%; margin-top: auto; align-self: center; }
+        .upcoming-event .event-indicator { background: var(--accent); }
+        .past-event .event-indicator { background: #a1a1aa; }
 
         /* --- 9. Glassmorphism Modal --- */
         .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.2); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); z-index: 2000; justify-content: center; align-items: center; opacity: 0; transition: opacity 0.4s ease; padding: 20px;}
-        .modal-content { background: var(--surface-color); backdrop-filter: saturate(180%) blur(30px); -webkit-backdrop-filter: saturate(180%) blur(30px); padding: clamp(2rem, 5vw, 3rem); border-radius: 24px; width: 100%; max-width: 500px; position: relative; box-shadow: 0 24px 48px rgba(0,0,0,0.1); border: 1px solid var(--glass-border); transform: translateY(20px); transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); }
+        .modal-content { background: var(--surface-color); backdrop-filter: saturate(180%) blur(30px); padding: clamp(2rem, 5vw, 3rem); border-radius: 24px; width: 100%; max-width: 500px; position: relative; box-shadow: 0 24px 48px rgba(0,0,0,0.1); border: 1px solid var(--glass-border); transform: translateY(20px); transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); }
         .modal-overlay.active { opacity: 1; }
         .modal-overlay.active .modal-content { transform: translateY(0); }
         .close-btn { position: absolute; top: 15px; right: 20px; font-size: 1.5rem; cursor: pointer; color: var(--text-muted); transition: color 0.2s; }
@@ -185,18 +225,14 @@
         .social-icon svg { width: 20px; height: 20px; fill: currentColor; }
         .footer-text { font-size: 0.85rem; color: var(--text-muted); text-align: center; line-height: 1.5;}
 
-        /* Mobile specific overrides */
-        @media (max-width: 768px) {
-            .hero-title-wrapper { min-height: 90px; }
-            .hero-buttons { flex-direction: column; width: 100%; max-width: 300px;}
-            .btn-primary, .btn-secondary { width: 100%; text-align: center;}
-        }
     </style>
 </head>
-<body>
+<body onload="window.scrollTo(0,0);">
+
+    <div class="menu-overlay" id="menuOverlay"></div>
 
     <header>
-        <div class="logo"><img src="image_f5119a.png" alt="DIHM Logo"></div>
+        <div class="logo"><img src="DIHM.png" alt="DIHM Logo"></div>
         
         <nav class="dropdown" id="navDropdown">
             <button class="menu-btn" id="menuBtn">Menu</button>
@@ -216,8 +252,8 @@
         <p class="hero-subtitle">Empowering the next generation of hospitality leaders. Track upcoming drives, access premium L&D resources, and celebrate our top placements.</p>
         
         <div class="hero-buttons">
-            <a href="#placements" class="btn-primary">View Placements</a>
-            <a href="junior-hub.html" class="btn-secondary">1st & 2nd Year Hub</a>
+            <a href="placement-records.html" target="_blank" class="btn-primary">View Placements</a>
+            <a href="#resources" class="btn-secondary">1st & 2nd Year Hub</a>
         </div>
 
         <div class="analytics-grid" id="analytics">
@@ -251,25 +287,25 @@
                 <div class="student-card">
                     <img src="/api/placeholder/320/240" alt="Student" class="student-img">
                     <div class="student-info">
-                        <div class="student-name">Ridhi Chawla</div>
-                        <div class="student-brand">IHCL</div>
-                        <div class="student-dept">HDP</div>
+                        <div class="student-name">Gagan Sharma</div>
+                        <div class="student-brand">The Oberoi Group</div>
+                        <div class="student-dept">OCER</div>
                     </div>
                 </div>
                 <div class="student-card">
                     <img src="/api/placeholder/320/240" alt="Student" class="student-img">
                     <div class="student-info">
-                         <div class="student-name">Ridhi Chawla</div>
-                        <div class="student-brand">IHCL</div>
-                        <div class="student-dept">HDP</div>
+                         <div class="student-name">Rahul Verma</div>
+                        <div class="student-brand">Radisson Blu</div>
+                        <div class="student-dept">MT</div>
                     </div>
                 </div>
                 <div class="student-card">
                     <img src="/api/placeholder/320/240" alt="Student" class="student-img">
                     <div class="student-info">
-                     <div class="student-name">Ridhi Chawla</div>
-                        <div class="student-brand">IHCL</div>
-                        <div class="student-dept">HDP</div>
+                     <div class="student-name">Meera Kapoor</div>
+                        <div class="student-brand">Compass Group</div>
+                        <div class="student-dept">EDP</div>
                     </div>
                 </div>
             </div>
@@ -277,28 +313,48 @@
     </section>
 
     <section id="calendar">
-        <h2 class="section-title" id="calendarMonthTitle">Upcoming Drives</h2>
+        <h2 class="section-title">Placement Drives</h2>
         <div class="calendar-container">
-            <div class="calendar-grid" id="calendarGrid">
-                </div>
+            <div class="calendar-header-ui">
+                <button onclick="changeMonth(-1)">&#8249;</button>
+                <h3 id="calendarMonthTitle">Month Year</h3>
+                <button onclick="changeMonth(1)">&#8250;</button>
+            </div>
+            <div class="calendar-grid" id="calendarGrid"></div>
         </div>
     </section>
 
     <section id="it-spotlight">
         <h2 class="section-title">In The Field: 17-Week IT</h2>
-        <div class="it-grid">
-            <div class="it-card">
-                <img src="/api/placeholder/400/250" alt="Training" class="it-img">
-                <div class="it-info">
-                    <div class="it-title">Gagan S. — Radisson Blu Dwarka</div>
-                    <div class="it-desc">Gaining hands-on operational experience and mastering advanced techniques in the Bakery and L&D departments during the rigorous 17-week industrial training phase.</div>
+        <div class="it-carousel-container">
+            <div class="it-track" id="itTrack">
+                <div class="it-card">
+                    <img src="/api/placeholder/400/250" alt="Training" class="it-img">
+                    <div class="it-info">
+                        <div class="it-title">Gagan S. — Radisson Blu Dwarka</div>
+                        <div class="it-desc">Gaining hands-on operational experience and mastering advanced techniques in the Bakery and L&D departments during the rigorous 17-week industrial training phase.</div>
+                    </div>
                 </div>
-            </div>
-            <div class="it-card">
-                <img src="/api/placeholder/400/250" alt="Training" class="it-img">
-                <div class="it-info">
-                    <div class="it-title">Meera K. — Le Méridien</div>
-                    <div class="it-desc">Managing high-volume guest relations and perfecting standard operating procedures at the Front Desk.</div>
+                <div class="it-card">
+                    <img src="/api/placeholder/400/250" alt="Training" class="it-img">
+                    <div class="it-info">
+                        <div class="it-title">Meera K. — Le Méridien</div>
+                        <div class="it-desc">Managing high-volume guest relations and perfecting standard operating procedures at the Front Desk.</div>
+                    </div>
+                </div>
+                <div class="it-card">
+                    <img src="/api/placeholder/400/250" alt="Training" class="it-img">
+                    <div class="it-info">
+                        <div class="it-title">Rahul V. — The Oberoi</div>
+                        <div class="it-desc">Learning the pinnacle of luxury guest service and cross-training comprehensively across all core F&B and Food Production outlets.</div>
+                    </div>
+                </div>
+                <div class="it-card">
+                    <img src="/api/placeholder/400/250" alt="Training" class="it-img">
+                    <div class="it-info">
+                        <div class="it-title">Aman T. — Taj Hotels</div>
+                        <div class="it-desc">Developing leadership skills and handling VIP banqueting events in a fast-paced luxury hospitality environment.</div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -307,31 +363,31 @@
     <section id="resources">
         <h2 class="section-title">L&D Resource Hub</h2>
         <div class="resource-grid">
-            <a href="#" class="resource-card">
+            <a href="resume-builder.html" target="_blank" class="resource-card">
                 <div class="res-text">
-                    <strong>ATS-Optimized Resumes</strong>
-                    <span>Clean templates formatted for modern hiring software.</span>
+                    <strong>Resume & Cover Letter Builder</strong>
+                    <span>Interactive web tool for perfect ATS layouts.</span>
                 </div>
-                <div class="download-icon">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+                <div class="link-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
                 </div>
             </a>
-            <a href="#" class="resource-card">
+            <a href="interview-prep.html" target="_blank" class="resource-card">
                 <div class="res-text">
                     <strong>Brand Interview Prep Kits</strong>
                     <span>AI-curated question banks for top hotel chains.</span>
                 </div>
-                <div class="download-icon">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+                <div class="link-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
                 </div>
             </a>
-            <a href="#" class="resource-card">
+            <a href="trade-tests.html" target="_blank" class="resource-card">
                 <div class="res-text">
                     <strong>Trade Test Guidelines</strong>
-                    <span>Detailed requirements for Culinary & Bakery assessments.</span>
+                    <span>Detailed web portal for Culinary & Bakery assessments.</span>
                 </div>
-                <div class="download-icon">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+                <div class="link-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
                 </div>
             </a>
         </div>
@@ -362,25 +418,32 @@
     </div>
 
     <script>
-        // --- DROPDOWN MENU LOGIC ---
+        // Ensure page is always forced to top even on reload/cache
+        window.onbeforeunload = function () { window.scrollTo(0, 0); }
+
+        // --- DROPDOWN MENU & FROSTED OVERLAY LOGIC ---
         const dropdown = document.getElementById('navDropdown');
         const menuBtn = document.getElementById('menuBtn');
         const dropLinks = document.querySelectorAll('.dropdown-menu a');
+        const menuOverlay = document.getElementById('menuOverlay');
 
         menuBtn.addEventListener('click', (e) => {
             e.stopPropagation();
             dropdown.classList.toggle('active');
+            menuOverlay.classList.toggle('active');
         });
 
         document.addEventListener('click', (e) => {
             if(!dropdown.contains(e.target)) {
                 dropdown.classList.remove('active');
+                menuOverlay.classList.remove('active');
             }
         });
 
         dropLinks.forEach(link => {
             link.addEventListener('click', () => {
                 dropdown.classList.remove('active');
+                menuOverlay.classList.remove('active');
             });
         });
 
@@ -414,12 +477,10 @@
             await sleep(150);
             textElement.innerText = "TPC";
         }
-
         window.addEventListener('load', runTypewriter);
 
         // --- 2. Number Counter Animation Logic ---
         const counters = document.querySelectorAll('.stat-number');
-        const speed = 50; 
         const counterObserver = new IntersectionObserver((entries, observer) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
@@ -427,7 +488,7 @@
                     const updateCount = () => {
                         const target = +counter.getAttribute('data-target');
                         const count = +counter.innerText;
-                        const inc = target / speed;
+                        const inc = target / 50;
                         if (count < target) {
                             counter.innerText = Math.ceil(count + inc);
                             setTimeout(updateCount, 40);
@@ -442,41 +503,86 @@
         }, { threshold: 0.5 });
         counters.forEach(counter => counterObserver.observe(counter));
 
-        // --- 3. Snap & Breathe Carousel Logic ---
-        const track = document.getElementById('carouselTrack');
-        const cards = document.querySelectorAll('.student-card');
-        const cardObserverOptions = { root: track, rootMargin: '0px', threshold: 0.6 };
-        const cardObserver = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    cards.forEach(c => c.classList.remove('active'));
-                    entry.target.classList.add('active');
+        // --- 3. TRUE INFINITE CAROUSEL ENGINE ---
+        function initPremiumCarousel(trackId, interval, cardSelector) {
+            const track = document.getElementById(trackId);
+            const originalItems = Array.from(track.children);
+            const originalCount = originalItems.length;
+            
+            // Clone 3 times to ensure infinite scroll illusion
+            originalItems.forEach(item => track.appendChild(item.cloneNode(true)));
+            originalItems.forEach(item => track.appendChild(item.cloneNode(true)));
+            originalItems.forEach(item => track.appendChild(item.cloneNode(true)));
+            
+            setTimeout(() => {
+                const gap = 30; // 30px gap defined in CSS
+                const itemWidth = originalItems[0].offsetWidth + gap;
+                const setWidth = itemWidth * originalCount;
+                
+                // Jump to the middle set initially so user can scroll left or right
+                track.scrollLeft = setWidth;
+                
+                track.addEventListener('scroll', () => {
+                    // Infinite Loop seamless jump
+                    if (track.scrollLeft >= setWidth * 2) {
+                        track.scrollLeft -= setWidth;
+                    } else if (track.scrollLeft <= 0) {
+                        track.scrollLeft += setWidth;
+                    }
+                    updateCenterFocus(track, cardSelector);
+                });
+
+                let timer;
+                function start() {
+                    timer = setInterval(() => {
+                        track.scrollBy({ left: itemWidth, behavior: 'smooth' });
+                    }, interval);
+                }
+                start();
+
+                track.addEventListener('mouseenter', () => clearInterval(timer));
+                track.addEventListener('mouseleave', start);
+                track.addEventListener('touchstart', () => clearInterval(timer), {passive: true});
+                track.addEventListener('touchend', start);
+                
+                updateCenterFocus(track, cardSelector);
+            }, 100);
+        }
+
+        // --- Active Center Scale Focus ---
+        function updateCenterFocus(track, cardSelector) {
+            const cards = track.querySelectorAll(cardSelector);
+            const centerPos = track.scrollLeft + (track.clientWidth / 2);
+            
+            let closestDist = Infinity;
+            let closestCard = null;
+            
+            cards.forEach(card => {
+                card.classList.remove('active');
+                const cardCenter = card.offsetLeft + (card.offsetWidth / 2);
+                const dist = Math.abs(centerPos - cardCenter);
+                if (dist < closestDist) {
+                    closestDist = dist;
+                    closestCard = card;
                 }
             });
-        }, cardObserverOptions);
-        cards.forEach(card => cardObserver.observe(card));
-
-        let autoScrollTimer;
-        function startAutoScroll() {
-            autoScrollTimer = setInterval(() => {
-                const activeCard = track.querySelector('.student-card.active');
-                if (activeCard) {
-                    let nextCard = activeCard.nextElementSibling;
-                    if (!nextCard) nextCard = cards[0];
-                    const scrollPos = nextCard.offsetLeft - (track.clientWidth / 2) + (nextCard.clientWidth / 2);
-                    track.scrollTo({ left: scrollPos, behavior: 'smooth' });
-                }
-            }, 6000); 
+            if (closestCard) closestCard.classList.add('active');
         }
-        track.addEventListener('mouseenter', () => clearInterval(autoScrollTimer));
-        track.addEventListener('mouseleave', startAutoScroll);
-        track.addEventListener('touchstart', () => clearInterval(autoScrollTimer));
-        track.addEventListener('touchend', startAutoScroll);
-        startAutoScroll();
 
-        // --- 4. Google Sheets & Calendar Logic ---
+        // Initialize both carousels securely after window loads
+        window.addEventListener('load', () => {
+            initPremiumCarousel('carouselTrack', 3500, '.student-card');
+            initPremiumCarousel('itTrack', 4500, '.it-card');
+        });
+
+
+        // --- 4. DYNAMIC CALENDAR LOGIC (With Month Nav & Google Sheets) ---
         const sheetCSV_URL = 'YOUR_PUBLISHED_CSV_LINK_HERE'; 
         let eventsData = [];
+        
+        const today = new Date(); 
+        let currentDisplayMonth = today.getMonth(); 
+        let currentDisplayYear = today.getFullYear();
 
         async function fetchSheetData() {
             try {
@@ -500,21 +606,30 @@
                 renderCalendar(); 
             } catch (error) {
                 console.error('Fetching data failed, loading placeholders:', error);
-                const tempDate = new Date();
-                const tempYear = tempDate.getFullYear();
-                const tempMonth = String(tempDate.getMonth() + 1).padStart(2, '0');
-                
                 eventsData = [
-                    { date: `${tempYear}-${tempMonth}-14`, brand: 'Radisson Blu', reqs: 'Completed 17-week industrial training, 2 Resumes, Formal Attire' },
-                    { date: `${tempYear}-${tempMonth}-22`, brand: 'Taj Hotels', reqs: 'Grooming Standards, Minimum 75% Attendance' }
+                    { date: `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-14`, brand: 'Radisson Blu', reqs: 'Completed 17-week industrial training, 2 Resumes, Formal Attire' },
+                    { date: `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-22`, brand: 'Taj Hotels', reqs: 'Grooming Standards, Minimum 75% Attendance' }
                 ];
                 renderCalendar();
             }
         }
 
+        function changeMonth(direction) {
+            currentDisplayMonth += direction;
+            if (currentDisplayMonth > 11) {
+                currentDisplayMonth = 0;
+                currentDisplayYear++;
+            } else if (currentDisplayMonth < 0) {
+                currentDisplayMonth = 11;
+                currentDisplayYear--;
+            }
+            renderCalendar();
+        }
+
         function renderCalendar() {
             const calendarGrid = document.getElementById('calendarGrid');
             calendarGrid.innerHTML = ''; 
+            
             const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
             days.forEach(day => {
                 let dayHeader = document.createElement('div');
@@ -523,37 +638,39 @@
                 calendarGrid.appendChild(dayHeader);
             });
 
-            const today = new Date(); 
-            const currentMonth = today.getMonth(); 
-            const currentYear = today.getFullYear();
+            const todayNormalized = new Date(today.getFullYear(), today.getMonth(), today.getDate());
             const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-            document.getElementById('calendarMonthTitle').innerText = `${monthNames[currentMonth]} ${currentYear} Drives`;
+            document.getElementById('calendarMonthTitle').innerText = `${monthNames[currentDisplayMonth]} ${currentDisplayYear}`;
             
-            const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
-            const firstDayIndex = new Date(currentYear, currentMonth, 1).getDay();
+            const daysInMonth = new Date(currentDisplayYear, currentDisplayMonth + 1, 0).getDate();
+            const firstDayIndex = new Date(currentDisplayYear, currentDisplayMonth, 1).getDay();
 
             for (let i = 0; i < firstDayIndex; i++) {
-                let emptyDiv = document.createElement('div');
-                calendarGrid.appendChild(emptyDiv);
+                calendarGrid.appendChild(document.createElement('div'));
             }
 
             for (let i = 1; i <= daysInMonth; i++) {
                 let dayDiv = document.createElement('div');
                 dayDiv.classList.add('calendar-day');
                 dayDiv.innerText = i;
-                let checkDate = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
                 
-                if (i < today.getDate() && currentMonth <= today.getMonth() && currentYear <= today.getFullYear()) {
-                    dayDiv.classList.add('past');
+                let checkDateStr = `${currentDisplayYear}-${String(currentDisplayMonth + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
+                let checkDateNormalized = new Date(currentDisplayYear, currentDisplayMonth, i);
+                
+                if (checkDateNormalized.getTime() === todayNormalized.getTime()) {
+                    dayDiv.classList.add('today');
                 }
 
-                let eventMatch = eventsData.find(e => e.date === checkDate);
+                let eventMatch = eventsData.find(e => e.date === checkDateStr);
                 if (eventMatch) {
-                    dayDiv.classList.add('has-event');
                     let dot = document.createElement('div');
                     dot.classList.add('event-indicator');
                     dayDiv.appendChild(dot);
-                    if (!dayDiv.classList.contains('past')) {
+                    
+                    if (checkDateNormalized < todayNormalized) {
+                        dayDiv.classList.add('past-event');
+                    } else {
+                        dayDiv.classList.add('upcoming-event');
                         dayDiv.onclick = () => openModal(eventMatch);
                     }
                 }
