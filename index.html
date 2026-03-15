@@ -23,6 +23,8 @@
             --accent: #0071e3;
             --glass-border: rgba(255, 255, 255, 0.4);
             --success: #28a745;
+            /* Dynamic Header Height for perfectly scaling logos */
+            --header-height: clamp(64px, 8vw, 80px);
         }
 
         * {
@@ -38,7 +40,7 @@
 
         /* --- 2. Solid Glass Feel Header & Pristine Dropdown --- */
         header {
-            position: fixed; top: 0; width: 100%; height: 64px;
+            position: fixed; top: 0; width: 100%; height: var(--header-height);
             background: var(--surface-color);
             backdrop-filter: saturate(180%) blur(20px);
             -webkit-backdrop-filter: saturate(180%) blur(20px);
@@ -47,12 +49,20 @@
             border-bottom: 1px solid rgba(0,0,0,0.05);
         }
 
-        .logo img { height: 36px; width: auto; mix-blend-mode: multiply; transition: opacity 0.3s ease; }
+        /* --- RESPONSIVE LOGO --- */
+        .logo img { 
+            height: clamp(36px, 6vw, 54px); /* Scales between 36px and 54px depending on screen width */
+            width: auto; 
+            max-width: 250px;
+            object-fit: contain; 
+            mix-blend-mode: multiply; 
+            transition: opacity 0.3s ease; 
+        }
         .logo img:hover { opacity: 0.8; }
 
         /* Frosted Background Overlay for Menu */
         .menu-overlay {
-            position: fixed; top: 64px; left: 0; width: 100vw; height: calc(100vh - 64px);
+            position: fixed; top: var(--header-height); left: 0; width: 100vw; height: calc(100vh - var(--header-height));
             background: rgba(255, 255, 255, 0.3);
             backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
             z-index: 990; opacity: 0; visibility: hidden; transition: all 0.3s ease;
@@ -91,11 +101,11 @@
         }
         .dropdown-menu a:hover { background: rgba(0,0,0,0.06); color: var(--accent); }
 
-        section { padding: 100px 5% 80px; display: flex; flex-direction: column; align-items: center; scroll-margin-top: 64px; width: 100%; }
+        section { padding: 120px 5% 80px; display: flex; flex-direction: column; align-items: center; scroll-margin-top: 64px; width: 100%; }
         .section-title { font-size: clamp(2rem, 5vw, 2.5rem); font-weight: 600; letter-spacing: -0.02em; margin-bottom: 3rem; text-align: center; }
 
         /* --- 3. Hero Section & Typewriter Formatting --- */
-        #hero { padding: clamp(120px, 15vw, 180px) 5% 100px; text-align: center; width: 100%; max-width: 1000px; margin: 0 auto; }
+        #hero { padding: clamp(140px, 15vw, 180px) 5% 100px; text-align: center; width: 100%; max-width: 1000px; margin: 0 auto; }
         .hero-title-wrapper { min-height: clamp(60px, 10vw, 100px); text-align: center; margin-bottom: 1.5rem; }
         .hero-title {
             font-size: clamp(1.6rem, 5vw, 4.2rem); font-weight: 700; letter-spacing: -0.04em; line-height: 1.2;
@@ -132,17 +142,16 @@
         
         .carousel-track { 
             display: flex; gap: 30px; 
-            padding: 0 calc(50vw - 150px); /* 150px is half of 300px */
+            padding: 0 calc(50vw - 150px); 
             overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; 
         }
         .it-track {
             display: flex; gap: 30px; 
-            padding: 0 calc(50vw - 200px); /* 200px is half of 400px */
+            padding: 0 calc(50vw - 200px); 
             overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; 
         }
         .carousel-track::-webkit-scrollbar, .it-track::-webkit-scrollbar { display: none; }
         
-        /* Hall of Fame Card */
         .student-card {
             scroll-snap-align: center; width: 300px; flex-shrink: 0;
             background: rgba(255, 255, 255, 0.4); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
@@ -158,7 +167,6 @@
         .student-brand { font-size: 1rem; color: var(--text-muted); margin-top: 4px; }
         .student-dept { font-size: 0.8rem; font-weight: 600; color: var(--accent); margin-top: 10px; text-transform: uppercase; letter-spacing: 0.5px;}
 
-        /* IT Card */
         .it-card { 
             scroll-snap-align: center; flex-shrink: 0; width: 400px;
             background: #fff; border-radius: 20px; overflow: hidden; 
@@ -176,7 +184,7 @@
         .it-title { font-size: 1.1rem; font-weight: 600; margin-bottom: 5px; }
         .it-desc { font-size: 0.95rem; color: var(--text-muted); line-height: 1.5; }
 
-        /* --- 7. Resources Hub (Updated to External Links) --- */
+        /* --- 7. Resources Hub --- */
         .resource-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; width: 100%; max-width: 1000px; }
         .resource-card { background: rgba(255, 255, 255, 0.5); backdrop-filter: blur(10px); border: 1px solid var(--glass-border); border-radius: 16px; padding: 1.5rem; display: flex; align-items: center; justify-content: space-between; transition: all 0.3s ease; cursor: pointer; text-decoration: none; color: var(--text-main); }
         .resource-card:hover { background: #fff; border-color: var(--accent); transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0,0,0,0.04); }
@@ -186,7 +194,6 @@
 
         /* --- 8. Dynamic Calendar Styling --- */
         .calendar-container { width: 100%; max-width: 900px; background: #ffffff; border-radius: 24px; padding: clamp(1.5rem, 5vw, 2.5rem); box-shadow: 0 8px 32px rgba(0,0,0,0.03); border: 1px solid rgba(0,0,0,0.02); }
-        
         .calendar-header-ui { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
         .calendar-header-ui button { background: var(--bg-color); border: 1px solid var(--border); border-radius: 50%; width: 40px; height: 40px; cursor: pointer; font-size: 1.2rem; color: var(--text-main); transition: 0.2s ease; display: flex; justify-content: center; align-items: center; }
         .calendar-header-ui button:hover { background: var(--accent); color: white; border-color: var(--accent); }
@@ -225,6 +232,11 @@
         .social-icon svg { width: 20px; height: 20px; fill: currentColor; }
         .footer-text { font-size: 0.85rem; color: var(--text-muted); text-align: center; line-height: 1.5;}
 
+        @media (max-width: 768px) {
+            .hero-title-wrapper { min-height: 90px; }
+            .hero-buttons { flex-direction: column; width: 100%; max-width: 300px;}
+            .btn-primary, .btn-secondary { width: 100%; text-align: center;}
+        }
     </style>
 </head>
 <body onload="window.scrollTo(0,0);">
@@ -232,7 +244,7 @@
     <div class="menu-overlay" id="menuOverlay"></div>
 
     <header>
-        <div class="logo"><img src="DIHM.png" alt="DIHM Logo"></div>
+        <div class="logo"><img src="image_f5119a.png" alt="DIHM Logo"></div>
         
         <nav class="dropdown" id="navDropdown">
             <button class="menu-btn" id="menuBtn">Menu</button>
@@ -276,38 +288,7 @@
         <h2 class="section-title">Hall of Fame</h2>
         <div class="carousel-wrapper">
             <div class="carousel-track" id="carouselTrack">
-                <div class="student-card">
-                    <img src="/api/placeholder/320/240" alt="Student" class="student-img">
-                    <div class="student-info">
-                        <div class="student-name">Ridhi Chawla</div>
-                        <div class="student-brand">IHCL</div>
-                        <div class="student-dept">HDP</div>
-                    </div>
-                </div>
-                <div class="student-card">
-                    <img src="/api/placeholder/320/240" alt="Student" class="student-img">
-                    <div class="student-info">
-                        <div class="student-name">Gagan Sharma</div>
-                        <div class="student-brand">The Oberoi Group</div>
-                        <div class="student-dept">OCER</div>
-                    </div>
-                </div>
-                <div class="student-card">
-                    <img src="/api/placeholder/320/240" alt="Student" class="student-img">
-                    <div class="student-info">
-                         <div class="student-name">Rahul Verma</div>
-                        <div class="student-brand">Radisson Blu</div>
-                        <div class="student-dept">MT</div>
-                    </div>
-                </div>
-                <div class="student-card">
-                    <img src="/api/placeholder/320/240" alt="Student" class="student-img">
-                    <div class="student-info">
-                     <div class="student-name">Meera Kapoor</div>
-                        <div class="student-brand">Compass Group</div>
-                        <div class="student-dept">EDP</div>
-                    </div>
-                </div>
+                <div style="width:100%; text-align:center; color:#86868b;">Loading Hall of Fame...</div>
             </div>
         </div>
     </section>
@@ -418,9 +399,6 @@
     </div>
 
     <script>
-        // Ensure page is always forced to top even on reload/cache
-        window.onbeforeunload = function () { window.scrollTo(0, 0); }
-
         // --- DROPDOWN MENU & FROSTED OVERLAY LOGIC ---
         const dropdown = document.getElementById('navDropdown');
         const menuBtn = document.getElementById('menuBtn');
@@ -509,6 +487,8 @@
             const originalItems = Array.from(track.children);
             const originalCount = originalItems.length;
             
+            if(originalCount === 0) return; // Prevent breaking if empty
+
             // Clone 3 times to ensure infinite scroll illusion
             originalItems.forEach(item => track.appendChild(item.cloneNode(true)));
             originalItems.forEach(item => track.appendChild(item.cloneNode(true)));
@@ -519,7 +499,7 @@
                 const itemWidth = originalItems[0].offsetWidth + gap;
                 const setWidth = itemWidth * originalCount;
                 
-                // Jump to the middle set initially so user can scroll left or right
+                // Jump to the middle set initially so user can scroll seamlessly
                 track.scrollLeft = setWidth;
                 
                 track.addEventListener('scroll', () => {
@@ -569,24 +549,101 @@
             if (closestCard) closestCard.classList.add('active');
         }
 
-        // Initialize both carousels securely after window loads
+
+        // --- 4. FETCH HALL OF FAME FROM GOOGLE SHEETS ---
+        // PASTE YOUR PUBLISHED GOOGLE SHEET LINK FOR HALL OF FAME HERE:
+        // Format Headers: Name | Brand | Department | Image URL
+        const HALL_OF_FAME_CSV_URL = 'YOUR_HALL_OF_FAME_CSV_LINK_HERE'; 
+        
+        // Smart Google Drive Image Link Converter
+        function formatImageUrl(url) {
+            if (!url) return '/api/placeholder/320/240';
+            
+            // Check for Google Drive /file/d/ format
+            const gDriveMatch = url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
+            if (gDriveMatch && gDriveMatch[1]) {
+                return `https://drive.google.com/uc?export=view&id=${gDriveMatch[1]}`;
+            }
+            // Check for Google Drive open?id= format
+            const gDriveMatch2 = url.match(/id=([a-zA-Z0-9_-]+)/);
+            if (gDriveMatch2 && gDriveMatch2[1] && url.includes('drive.google.com')) {
+                return `https://drive.google.com/uc?export=view&id=${gDriveMatch2[1]}`;
+            }
+            // If it's a local path like images/photo.png or standard URL, return as is
+            return url; 
+        }
+
+        async function fetchHallOfFame() {
+            const track = document.getElementById('carouselTrack');
+            try {
+                const response = await fetch(HALL_OF_FAME_CSV_URL);
+                if (!response.ok) throw new Error("Fetch failed");
+                const data = await response.text();
+                const rows = data.split('\n').slice(1); 
+                
+                track.innerHTML = ''; // Clear loading text
+                
+                let addedCount = 0;
+                rows.forEach(row => {
+                    const cols = row.match(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g) || row.split(',');
+                    if(cols.length >= 3 && cols[0].trim() !== '') {
+                        const name = cols[0].replace(/"/g, '').trim();
+                        const brand = cols[1].replace(/"/g, '').trim();
+                        const dept = cols[2].replace(/"/g, '').trim();
+                        
+                        let rawImg = cols[3] ? cols[3].replace(/"/g, '').trim() : '';
+                        let finalImgUrl = formatImageUrl(rawImg);
+
+                        track.innerHTML += `
+                            <div class="student-card">
+                                <img src="${finalImgUrl}" alt="Student" class="student-img">
+                                <div class="student-info">
+                                    <div class="student-name">${name}</div>
+                                    <div class="student-brand">${brand}</div>
+                                    <div class="student-dept">${dept}</div>
+                                </div>
+                            </div>
+                        `;
+                        addedCount++;
+                    }
+                });
+
+                if(addedCount > 0) {
+                    initPremiumCarousel('carouselTrack', 3500, '.student-card');
+                }
+
+            } catch (error) {
+                console.log("Could not load Google Sheet, using fallback data.");
+                track.innerHTML = `
+                    <div class="student-card"><img src="/api/placeholder/320/240" class="student-img"><div class="student-info"><div class="student-name">Ridhi Chawla</div><div class="student-brand">IHCL</div><div class="student-dept">HDP</div></div></div>
+                    <div class="student-card"><img src="/api/placeholder/320/240" class="student-img"><div class="student-info"><div class="student-name">Gagan Sharma</div><div class="student-brand">The Oberoi Group</div><div class="student-dept">OCER</div></div></div>
+                    <div class="student-card"><img src="/api/placeholder/320/240" class="student-img"><div class="student-info"><div class="student-name">Rahul Verma</div><div class="student-brand">Radisson Blu</div><div class="student-dept">MT</div></div></div>
+                    <div class="student-card"><img src="/api/placeholder/320/240" class="student-img"><div class="student-info"><div class="student-name">Meera Kapoor</div><div class="student-brand">Compass Group</div><div class="student-dept">EDP</div></div></div>
+                `;
+                initPremiumCarousel('carouselTrack', 3500, '.student-card');
+            }
+        }
+
+        // Initialize carousels after window loads
         window.addEventListener('load', () => {
-            initPremiumCarousel('carouselTrack', 3500, '.student-card');
+            fetchHallOfFame(); 
             initPremiumCarousel('itTrack', 4500, '.it-card');
         });
 
 
-        // --- 4. DYNAMIC CALENDAR LOGIC (With Month Nav & Google Sheets) ---
-        const sheetCSV_URL = 'YOUR_PUBLISHED_CSV_LINK_HERE'; 
+        // --- 5. DYNAMIC CALENDAR LOGIC (With Month Nav & Google Sheets) ---
+        // PASTE YOUR PUBLISHED GOOGLE SHEET LINK FOR CALENDAR HERE:
+        // Format Headers: Date (YYYY-MM-DD) | Brand | Requirements
+        const CALENDAR_CSV_URL = 'YOUR_CALENDAR_CSV_LINK_HERE'; 
         let eventsData = [];
         
         const today = new Date(); 
         let currentDisplayMonth = today.getMonth(); 
         let currentDisplayYear = today.getFullYear();
 
-        async function fetchSheetData() {
+        async function fetchCalendarData() {
             try {
-                const response = await fetch(sheetCSV_URL);
+                const response = await fetch(CALENDAR_CSV_URL);
                 if (!response.ok) throw new Error("Network response was not ok");
                 const data = await response.text();
                 const rows = data.split('\n');
@@ -605,7 +662,7 @@
 
                 renderCalendar(); 
             } catch (error) {
-                console.error('Fetching data failed, loading placeholders:', error);
+                console.error('Fetching calendar failed, loading placeholders:', error);
                 eventsData = [
                     { date: `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-14`, brand: 'Radisson Blu', reqs: 'Completed 17-week industrial training, 2 Resumes, Formal Attire' },
                     { date: `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-22`, brand: 'Taj Hotels', reqs: 'Grooming Standards, Minimum 75% Attendance' }
@@ -677,9 +734,9 @@
                 calendarGrid.appendChild(dayDiv);
             }
         }
-        fetchSheetData();
+        fetchCalendarData();
 
-        // --- 5. Glassmorphism Modal Logic ---
+        // --- 6. Glassmorphism Modal Logic ---
         const modal = document.getElementById('interviewModal');
         function openModal(data) {
             document.getElementById('mBrand').innerText = data.brand;
