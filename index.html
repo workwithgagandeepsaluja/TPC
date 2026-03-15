@@ -23,7 +23,8 @@
             --accent: #0071e3;
             --glass-border: rgba(255, 255, 255, 0.4);
             --success: #28a745;
-            --header-height: clamp(64px, 8vw, 80px);
+            /* Taller header to accommodate the bigger logo */
+            --header-height: clamp(70px, 10vw, 90px);
         }
 
         * {
@@ -37,23 +38,22 @@
         html { scroll-behavior: smooth; }
         body { background-color: var(--bg-color); color: var(--text-main); overflow-x: hidden; }
 
-        /* --- Unified Loading Screen --- */
-        #pageLoader { 
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-            background: var(--bg-color); display: flex; flex-direction: column; 
-            justify-content: center; align-items: center; z-index: 9999; 
-            transition: opacity 0.5s ease, visibility 0.5s ease; 
+        /* --- Loading Screen Styles --- */
+        .page-loader {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: var(--bg-color); z-index: 9999;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            transition: opacity 0.8s cubic-bezier(0.25, 0.8, 0.25, 1), visibility 0.8s;
         }
-        #pageLoader.hidden { opacity: 0; visibility: hidden; }
-        .spinner { 
-            width: 44px; height: 44px; border: 3px solid var(--border); 
-            border-top-color: var(--accent); border-radius: 50%; 
-            animation: spin 1s cubic-bezier(0.5, 0, 0.5, 1) infinite; 
-            margin-bottom: 12px; 
+        .page-loader.hidden { opacity: 0; visibility: hidden; }
+        .spinner {
+            width: 44px; height: 44px; margin-bottom: 15px;
+            border: 3px solid rgba(0, 113, 227, 0.15); border-top-color: var(--accent);
+            border-radius: 50%; animation: spin 1s cubic-bezier(0.5, 0, 0.5, 1) infinite;
         }
         @keyframes spin { to { transform: rotate(360deg); } }
 
-        /* --- 2. Solid Glass Feel Header & Pristine Dropdown --- */
+        /* --- 2. Solid Glass Feel Header --- */
         header {
             position: fixed; top: 0; width: 100%; height: var(--header-height);
             background: var(--surface-color);
@@ -64,10 +64,11 @@
             border-bottom: 1px solid rgba(0,0,0,0.05);
         }
 
+        /* MASSIVELY INCREASED LOGO SIZE */
         .logo img { 
-            height: clamp(36px, 6vw, 54px); 
+            height: clamp(45px, 8vw, 75px); 
             width: auto; 
-            max-width: 250px;
+            max-width: 300px;
             object-fit: contain; 
             mix-blend-mode: multiply; 
             transition: opacity 0.3s ease; 
@@ -76,48 +77,38 @@
 
         .menu-overlay {
             position: fixed; top: var(--header-height); left: 0; width: 100vw; height: calc(100vh - var(--header-height));
-            background: rgba(255, 255, 255, 0.3);
-            backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+            background: rgba(255, 255, 255, 0.3); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
             z-index: 990; opacity: 0; visibility: hidden; transition: all 0.3s ease;
         }
         .menu-overlay.active { opacity: 1; visibility: visible; }
 
         .dropdown { position: relative; z-index: 1001;}
-        
         .menu-btn {
-            background: transparent; border: none; cursor: pointer;
-            color: var(--text-main); font-size: 1rem; font-weight: 500;
-            padding: 8px 16px; border-radius: 8px; transition: all 0.2s ease;
-            letter-spacing: -0.01em;
+            background: transparent; border: none; cursor: pointer; color: var(--text-main); font-size: 1rem; font-weight: 500;
+            padding: 8px 16px; border-radius: 8px; transition: all 0.2s ease; letter-spacing: -0.01em;
         }
         .menu-btn:hover { background: rgba(0,0,0,0.04); }
         
         .dropdown-menu {
             position: absolute; top: 100%; right: 0; margin-top: 8px;
-            background: rgba(255, 255, 255, 0.85);
-            backdrop-filter: saturate(180%) blur(30px);
-            -webkit-backdrop-filter: saturate(180%) blur(30px);
-            border: 1px solid var(--glass-border);
-            border-radius: 14px; padding: 6px;
+            background: rgba(255, 255, 255, 0.85); backdrop-filter: saturate(180%) blur(30px); -webkit-backdrop-filter: saturate(180%) blur(30px);
+            border: 1px solid var(--glass-border); border-radius: 14px; padding: 6px;
             display: flex; flex-direction: column; min-width: 180px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.08);
             opacity: 0; visibility: hidden; transform: translateY(-10px);
             transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
         }
-        
         .dropdown.active .dropdown-menu { opacity: 1; visibility: visible; transform: translateY(0); }
-        
         .dropdown-menu a {
             text-decoration: none; color: var(--text-main); font-size: 0.9rem; font-weight: 500;
-            padding: 10px 14px; border-radius: 8px; transition: all 0.2s ease;
-            text-align: left; letter-spacing: -0.01em;
+            padding: 10px 14px; border-radius: 8px; transition: all 0.2s ease; text-align: left; letter-spacing: -0.01em;
         }
         .dropdown-menu a:hover { background: rgba(0,0,0,0.06); color: var(--accent); }
 
         section { padding: 120px 5% 80px; display: flex; flex-direction: column; align-items: center; scroll-margin-top: 64px; width: 100%; }
         .section-title { font-size: clamp(2rem, 5vw, 2.5rem); font-weight: 600; letter-spacing: -0.02em; margin-bottom: 3rem; text-align: center; }
 
-        /* --- 3. Hero Section & Typewriter Formatting --- */
+        /* --- 3. Hero Section --- */
         #hero { padding: clamp(140px, 15vw, 180px) 5% 100px; text-align: center; width: 100%; max-width: 1000px; margin: 0 auto; }
         .hero-title-wrapper { min-height: clamp(60px, 10vw, 100px); text-align: center; margin-bottom: 1.5rem; }
         .hero-title {
@@ -135,14 +126,14 @@
         .btn-secondary { background: rgba(255, 255, 255, 0.5); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); color: var(--text-main); border: 1px solid var(--glass-border); }
         .btn-secondary:hover { background: #ffffff; border-color: var(--text-main); }
 
-        /* --- 4. Live Analytics Dashboard --- */
+        /* --- 4. Analytics Dashboard --- */
         .analytics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: clamp(16px, 3vw, 24px); width: 100%; max-width: 1000px; margin-top: 1rem; }
         .stat-card { background: rgba(255, 255, 255, 0.6); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid var(--glass-border); border-radius: 24px; padding: clamp(1.5rem, 4vw, 2.5rem) 1.5rem; text-align: center; box-shadow: 0 4px 24px rgba(0,0,0,0.02); transition: transform 0.4s ease; }
         .stat-card:hover { transform: translateY(-5px); }
         .stat-number { font-size: clamp(2.5rem, 6vw, 3.5rem); font-weight: 700; color: var(--accent); letter-spacing: -0.03em; line-height: 1; margin-bottom: 0.5rem; }
         .stat-label { font-size: clamp(0.9rem, 2vw, 1rem); font-weight: 500; color: var(--text-muted); }
 
-        /* --- 5. True Infinite Circular Carousels --- */
+        /* --- 5. FLAWLESS INFINITE CAROUSELS --- */
         .carousel-wrapper, .it-carousel-container { 
             width: 100vw; position: relative; padding: 40px 0 60px; overflow: hidden; 
         }
@@ -154,12 +145,13 @@
         .carousel-wrapper::after, .it-carousel-container::after { right: 0; background: linear-gradient(to left, var(--bg-color) 0%, rgba(251,251,253,0) 100%); }
         
         .carousel-track, .it-track {
+            display: flex; gap: 30px; overflow-x: auto; 
+            scroll-snap-type: x mandatory; scrollbar-width: none; 
             scroll-behavior: smooth;
-            display: flex; gap: 30px; 
-            overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; 
         }
-        .carousel-track { padding: 0 calc(50vw - 150px); }
-        .it-track { padding: 0 calc(50vw - 200px); }
+        /* MATHEMATICALLY PERFECT CENTERING */
+        .carousel-track { padding: 0 calc(50% - 150px); } 
+        .it-track { padding: 0 calc(50% - 200px); }
         .carousel-track::-webkit-scrollbar, .it-track::-webkit-scrollbar { display: none; }
         
         .student-card {
@@ -167,8 +159,7 @@
             background: rgba(255, 255, 255, 0.4); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
             border-radius: 24px; border: 1px solid rgba(255, 255, 255, 0.6); overflow: hidden; position: relative;
             transform: scale(0.85); opacity: 0.4;
-            transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.6s ease, box-shadow 0.6s ease;
-            scroll-margin-inline-start: calc(50vw - 150px);
+            transition: transform 0.8s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.8s ease, box-shadow 0.8s ease;
         }
         .student-card.active { transform: scale(1.05); opacity: 1; background: #ffffff; box-shadow: 0 20px 50px rgba(0, 113, 227, 0.12); z-index: 10; }
         .student-img { width: 100%; height: auto; aspect-ratio: 4 / 3; object-fit: cover; object-position: top center; display: block; background: #e5e5ea; transition: transform 0.8s ease; }
@@ -183,17 +174,15 @@
             background: #fff; border-radius: 20px; overflow: hidden; 
             box-shadow: 0 4px 20px rgba(0,0,0,0.03); border: 1px solid rgba(0,0,0,0.02); 
             transform: scale(0.85); opacity: 0.5;
-            transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.6s ease, box-shadow 0.6s ease; 
-            scroll-margin-inline-start: calc(50vw - 200px);
+            transition: transform 0.8s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.8s ease, box-shadow 0.8s ease; 
         }
         .it-card.active { transform: scale(1.05); opacity: 1; box-shadow: 0 15px 40px rgba(0,0,0,0.08); z-index: 10; }
+        
         @media (max-width: 768px) { 
-            .it-track { padding: 0 calc(50vw - 42.5vw); }
-            .it-card { 
-                width: 85vw; 
-                scroll-margin-inline-start: calc(50vw - 42.5vw);
-            } 
+            .it-track { padding: 0 7.5vw; } /* Centers exactly an 85vw card */
+            .it-card { width: 85vw; } 
         }
+
         .it-img { width: 100%; height: clamp(180px, 20vw, 200px); object-fit: cover; }
         .it-info { padding: 1.5rem; }
         .it-title { font-size: 1.1rem; font-weight: 600; margin-bottom: 5px; }
@@ -219,7 +208,6 @@
         .calendar-day { aspect-ratio: 1; display: flex; flex-direction: column; justify-content: flex-start; padding: clamp(4px, 1.5vw, 12px); border-radius: clamp(8px, 2vw, 14px); border: 2px solid transparent; background: #fbfbfd; cursor: pointer; transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); position: relative; font-size: clamp(0.9rem, 2.5vw, 1.1rem); font-weight: 500; }
         
         .calendar-day:hover { background: #ffffff; box-shadow: 0 4px 12px rgba(0,0,0,0.08); transform: scale(1.05); z-index: 2; }
-        
         .calendar-day.today { color: var(--success) !important; font-weight: 700; border-color: var(--success) !important; background: rgba(40, 167, 69, 0.05) !important; }
         .calendar-day.upcoming-event { color: var(--accent); background: rgba(0, 113, 227, 0.05); border-color: rgba(0, 113, 227, 0.2); }
         .calendar-day.past-event { color: #a1a1aa; background: rgba(0, 0, 0, 0.02); border-color: rgba(0, 0, 0, 0.05); pointer-events: none; }
@@ -256,7 +244,7 @@
 </head>
 <body onload="window.scrollTo(0,0);">
 
-    <div id="pageLoader">
+    <div id="pageLoader" class="page-loader">
         <div class="spinner"></div>
         <div style="font-weight: 600; color: var(--text-muted); font-size: 1rem; letter-spacing: 0.02em;">Loading DIHM Portal...</div>
     </div>
@@ -284,7 +272,7 @@
         <p class="hero-subtitle">Empowering the next generation of hospitality leaders. Track upcoming drives, access premium L&D resources, and celebrate our top placements.</p>
         
         <div class="hero-buttons">
-            <a href="placement-records.html" target="_blank" class="btn-primary">View Placements</a>
+            <a href="https://workwithgagandeepsaluja.github.io/tpc-placements/" target="_blank" class="btn-primary">View Placements</a>
             <a href="#resources" class="btn-secondary">1st & 2nd Year Hub</a>
         </div>
 
@@ -419,7 +407,7 @@
     </div>
 
     <script>
-        // --- 1. ADVANCED CSV PARSER ---
+        // --- ADVANCED CSV PARSER ---
         function parseCSVRow(text) {
             let result = [];
             let cur = '';
@@ -439,7 +427,7 @@
             return result;
         }
 
-        // --- DROPDOWN MENU & FROSTED OVERLAY LOGIC ---
+        // --- MENU LOGIC ---
         const dropdown = document.getElementById('navDropdown');
         const menuBtn = document.getElementById('menuBtn');
         const dropLinks = document.querySelectorAll('.dropdown-menu a');
@@ -465,7 +453,7 @@
             });
         });
 
-        // --- HUMAN TYPEWRITER ANIMATION LOGIC ---
+        // --- TYPEWRITER ANIMATION ---
         const textElement = document.getElementById('tpcText');
         const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
@@ -497,7 +485,7 @@
         }
         window.addEventListener('load', runTypewriter);
 
-        // --- Number Counter Animation Logic ---
+        // --- NUMBER COUNTER ---
         const counters = document.querySelectorAll('.stat-number');
         const counterObserver = new IntersectionObserver((entries, observer) => {
             entries.forEach(entry => {
@@ -521,28 +509,10 @@
         }, { threshold: 0.5 });
         counters.forEach(counter => counterObserver.observe(counter));
 
-        // --- HIGH-PERFORMANCE ANTI-JITTER CAROUSEL ENGINE ---
-        function updateCenterFocus(track, cardSelector) {
-            window.requestAnimationFrame(() => {
-                const cards = track.querySelectorAll(cardSelector);
-                const centerPos = track.scrollLeft + (track.clientWidth / 2);
-                
-                let closestDist = Infinity;
-                let closestCard = null;
-                
-                cards.forEach(card => {
-                    card.classList.remove('active');
-                    const cardCenter = card.offsetLeft + (card.offsetWidth / 2);
-                    const dist = Math.abs(centerPos - cardCenter);
-                    if (dist < closestDist) {
-                        closestDist = dist;
-                        closestCard = card;
-                    }
-                });
-                if (closestCard) closestCard.classList.add('active');
-            });
-        }
 
+        // ==========================================
+        // FLUID ANTI-JITTER CAROUSEL ENGINE
+        // ==========================================
         function initPremiumCarousel(trackId, intervalTime, cardSelector) {
             const track = document.getElementById(trackId);
             const originalItems = Array.from(track.children);
@@ -550,52 +520,68 @@
             
             if(originalCount === 0) return; 
 
-            // Clone sets for infinite loop illusion
-            originalItems.forEach(item => track.appendChild(item.cloneNode(true)));
-            originalItems.forEach(item => track.appendChild(item.cloneNode(true)));
+            // Clone to create massive buffer (10 sets) to never hit the wall
+            for(let i=0; i<9; i++){
+                originalItems.forEach(item => track.appendChild(item.cloneNode(true)));
+            }
             
-            setTimeout(() => {
-                const gap = 30; 
-                const itemWidth = originalItems[0].offsetWidth + gap;
-                const setWidth = itemWidth * originalCount;
-                
-                // Start in the middle set
-                track.scrollLeft = setWidth;
-                
-                let isInteracting = false;
-                
-                track.addEventListener('scroll', () => {
-                    if (isInteracting) {
-                        // Invisible boundary jump if user manually scrolls too far
-                        if (track.scrollLeft >= setWidth * 2) {
-                            track.style.scrollBehavior = 'auto';
-                            track.scrollLeft -= setWidth;
-                            track.style.scrollBehavior = 'smooth';
-                        } else if (track.scrollLeft <= 0) {
-                            track.style.scrollBehavior = 'auto';
-                            track.scrollLeft += setWidth;
-                            track.style.scrollBehavior = 'smooth';
+            const allItems = Array.from(track.querySelectorAll(cardSelector));
+
+            function getExactCenterScroll(card) {
+                return card.offsetLeft - (track.clientWidth / 2) + (card.offsetWidth / 2);
+            }
+
+            function updateFocus() {
+                window.requestAnimationFrame(() => {
+                    const centerPos = track.scrollLeft + (track.clientWidth / 2);
+                    let closestDist = Infinity;
+                    let closestCard = null;
+                    
+                    allItems.forEach(card => {
+                        card.classList.remove('active');
+                        const cardCenter = card.offsetLeft + (card.offsetWidth / 2);
+                        const dist = Math.abs(centerPos - cardCenter);
+                        if (dist < closestDist) {
+                            closestDist = dist;
+                            closestCard = card;
                         }
-                        updateCenterFocus(track, cardSelector);
-                    }
+                    });
+                    if (closestCard) closestCard.classList.add('active');
+                });
+            }
+
+            setTimeout(() => {
+                let currentIndex = originalCount; // Start at set 2
+                
+                track.scrollLeft = getExactCenterScroll(allItems[currentIndex]);
+                updateFocus();
+
+                let isInteracting = false;
+                track.addEventListener('scroll', () => {
+                    if (isInteracting) updateFocus();
                 }, { passive: true });
 
                 let autoScrollTimer;
+                
                 function advanceCarousel() {
                     if (isInteracting) return;
                     
-                    // Check if we need to reset before scrolling to avoid hitting the wall
-                    if (track.scrollLeft >= setWidth * 2 - (itemWidth / 2)) {
+                    // Invisible Reset if we get too far
+                    if (currentIndex >= originalCount * 8) {
                         track.style.scrollBehavior = 'auto';
-                        track.scrollLeft -= setWidth;
-                        void track.offsetWidth; // Force DOM reflow so jump is invisible
+                        currentIndex = originalCount + (currentIndex % originalCount);
+                        track.scrollLeft = getExactCenterScroll(allItems[currentIndex]);
+                        void track.offsetWidth; // Force Reflow
                     }
                     
+                    currentIndex++;
+                    const nextCard = allItems[currentIndex];
+                    if(!nextCard) return;
+
                     track.style.scrollBehavior = 'smooth';
-                    track.scrollLeft += itemWidth;
+                    track.scrollTo({ left: getExactCenterScroll(nextCard), behavior: 'smooth' });
                     
-                    // Wait for smooth scroll to finish before updating focus
-                    setTimeout(() => updateCenterFocus(track, cardSelector), 600);
+                    setTimeout(updateFocus, 600); // Update class after animation ends
                 }
 
                 function startTimer() {
@@ -604,27 +590,33 @@
                 }
                 startTimer();
 
-                // Advanced Pause/Resume Logic for Mobile Touch
+                // Smart Touch-Pause Logic
                 const pause = () => { isInteracting = true; clearInterval(autoScrollTimer); };
                 
+                let touchResumeTimeout;
+                const resumeAfterDelay = () => {
+                    clearTimeout(touchResumeTimeout);
+                    // 3-second delay after user lets go before auto-scroll takes back over
+                    touchResumeTimeout = setTimeout(() => {
+                        isInteracting = false;
+                        
+                        // Resync current index to wherever they scrolled manually
+                        const activeCard = track.querySelector('.active');
+                        if(activeCard) currentIndex = allItems.indexOf(activeCard);
+                        
+                        startTimer();
+                    }, 3000); 
+                };
+
+                track.addEventListener('touchstart', pause, {passive: true});
+                track.addEventListener('touchend', resumeAfterDelay);
                 track.addEventListener('mouseenter', pause);
                 track.addEventListener('mouseleave', () => { isInteracting = false; startTimer(); });
-                
-                track.addEventListener('touchstart', pause, {passive: true});
-                track.addEventListener('touchend', () => {
-                    // Give the user 3 seconds to read after they let go before auto-scrolling resumes
-                    setTimeout(() => { 
-                        isInteracting = false; 
-                        startTimer(); 
-                    }, 3000); 
-                });
-                
-                updateCenterFocus(track, cardSelector);
-            }, 300); // Delay allows CSS and layout to render properly before measuring
+
+            }, 300);
         }
 
-
-        // --- FETCH HALL OF FAME FROM GOOGLE SHEETS ---
+        // --- FETCH HALL OF FAME ---
         const HALL_OF_FAME_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRIpy-Ab3aiM9wD3wQp_Ln1hv_Q9GqXdH6s4qcmdkqH6-K1mb8frjFHuWritGs88XYT-EKBw8v9tLW_/pub?output=csv'; 
         
         function formatImageUrl(url) {
@@ -671,7 +663,7 @@
                 });
 
                 if(addedCount > 0) {
-                    initPremiumCarousel('carouselTrack', 4500, '.student-card'); // 4.5s reading time
+                    initPremiumCarousel('carouselTrack', 4500, '.student-card'); // 4.5s
                 }
 
             } catch (error) {
@@ -682,11 +674,11 @@
                     <div class="student-card"><img src="/api/placeholder/320/240" class="student-img"><div class="student-info"><div class="student-name">Rahul Verma</div><div class="student-brand">Radisson Blu</div><div class="student-dept">MT</div></div></div>
                     <div class="student-card"><img src="/api/placeholder/320/240" class="student-img"><div class="student-info"><div class="student-name">Meera Kapoor</div><div class="student-brand">Compass Group</div><div class="student-dept">EDP</div></div></div>
                 `;
-                initPremiumCarousel('carouselTrack', 4500, '.student-card'); // 4.5s reading time
+                initPremiumCarousel('carouselTrack', 4500, '.student-card'); // 4.5s
             }
         }
 
-        // --- DYNAMIC CALENDAR LOGIC ---
+        // --- FETCH CALENDAR ---
         const CALENDAR_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRQW3sPgmWQcHCJ8vysjCGp6_-3qho5Gj50j1y_rt3wHOVH1-g1M8B_Zxb6kLNQrb4W75-MnO8SZIdj/pub?output=csv'; 
         let eventsData = [];
         
@@ -697,25 +689,20 @@
         async function fetchCalendarData() {
             try {
                 const response = await fetch(CALENDAR_CSV_URL);
-                if (!response.ok) throw new Error("Network response was not ok");
+                if (!response.ok) throw new Error("Fetch failed");
                 const data = await response.text();
                 const rows = data.split('\n');
                 
                 eventsData = rows.slice(1).map(row => {
                     const columns = parseCSVRow(row);
                     if(columns.length >= 3 && columns[0] !== "") {
-                        return {
-                            date: columns[0],
-                            brand: columns[1],
-                            reqs: columns[2]
-                        };
+                        return { date: columns[0], brand: columns[1], reqs: columns[2] };
                     }
                     return null;
                 }).filter(item => item !== null);
 
                 renderCalendar(); 
             } catch (error) {
-                console.error('Fetching calendar failed, loading placeholders:', error);
                 eventsData = [
                     { date: `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-14`, brand: 'Radisson Blu', reqs: 'Completed 17-week industrial training, 2 Resumes, Formal Attire' },
                     { date: `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-22`, brand: 'Taj Hotels', reqs: 'Grooming Standards, Minimum 75% Attendance' }
@@ -727,11 +714,9 @@
         function changeMonth(direction) {
             currentDisplayMonth += direction;
             if (currentDisplayMonth > 11) {
-                currentDisplayMonth = 0;
-                currentDisplayYear++;
+                currentDisplayMonth = 0; currentDisplayYear++;
             } else if (currentDisplayMonth < 0) {
-                currentDisplayMonth = 11;
-                currentDisplayYear--;
+                currentDisplayMonth = 11; currentDisplayYear--;
             }
             renderCalendar();
         }
@@ -792,7 +777,7 @@
         window.addEventListener('load', async () => {
             await fetchHallOfFame(); 
             fetchCalendarData();
-            initPremiumCarousel('itTrack', 6000, '.it-card'); // 6s reading time for IT 
+            initPremiumCarousel('itTrack', 6000, '.it-card'); // 6s reading time
 
             const loader = document.getElementById('pageLoader');
             setTimeout(() => {
@@ -800,7 +785,7 @@
             }, 400);
         });
 
-        // --- Glassmorphism Modal Logic ---
+        // --- Modal Logic ---
         const modal = document.getElementById('interviewModal');
         function openModal(data) {
             document.getElementById('mBrand').innerText = data.brand;
